@@ -3,9 +3,12 @@ package musicddbb.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,7 +25,9 @@ public class Usuario implements Serializable{
 	@Column(name="foto")
 	protected String foto;
 	
-	//protected List<Lista> listas_creadas;
+	@OneToMany(mappedBy="creador", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	protected List<Lista> listas_creadas;
+	
 	//protected List<Lista> listas_suscrito;
 
 	public Usuario() {
@@ -97,17 +102,18 @@ public class Usuario implements Serializable{
 		this.foto = foto;
 	}
 
-	/*public List<Lista> getListas_creadas() {
-		if (listas_creadas == null) {
-			// listas_creadas = ListaDAO.selectAll(id);
-		}
+	public List<Lista> getListas_creadas() {
 		return listas_creadas;
 	}
 
 	public void setListas_creadas(List<Lista> listas_creadas) {
 		this.listas_creadas = listas_creadas;
+		for(Lista l: this.listas_creadas) {
+			l.setCreador(this);
+		}
 	}
 
+	/*
 	public List<Lista> getListas_suscrito() {
 		if (listas_suscrito == null) {
 			// listas_suscrito = SuscripcionDAO.selectAllListas(id);
@@ -123,7 +129,7 @@ public class Usuario implements Serializable{
 	public String toString() {
 		return "\n------ ID: " + id + " ------\nCorreo: " + correo + "\nNombre: " + nombre + "\nFoto: " + foto;
 	}
-	/*
+	
 	public String toStringWithListas_Creadas() {
 		String cadena = "";
 		cadena += toString();
@@ -141,6 +147,7 @@ public class Usuario implements Serializable{
 		return cadena;
 	}
 
+	/*
 	public String toStringWithListas_Suscrito() {
 		String cadena = "";
 		cadena += toString();

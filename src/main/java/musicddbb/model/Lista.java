@@ -1,17 +1,48 @@
 package musicddbb.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="lista")
 public class Lista {
+	@Id
+	@Column(name="id")
 	protected int id;
+	@Column(name="nombre")
     protected String nombre;
+	@Column(name="descripcion")
     protected String descripcion;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="id_usuario")
     protected Usuario creador;
-    protected List<Cancion> canciones;
-    protected List<Usuario> usuarios_suscritos;
+    /*protected List<Cancion> canciones;
+    protected List<Usuario> usuarios_suscritos;*/
 
     public Lista() {
         this.id = -1;
+    }
+    
+    public Lista(int id, String nombre, String descripcion) {
+    	this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+    }
+    
+    public Lista(int id, String nombre, String descripcion, Usuario creador) {
+    	this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.creador = creador;
     }
 
     public Lista(int id, String nombre, String descripcion, Usuario creador, List<Cancion> canciones, List<Usuario> usuarios_suscritos) {
@@ -19,18 +50,17 @@ public class Lista {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.creador = creador;
-        this.canciones = canciones;
-        this.usuarios_suscritos = usuarios_suscritos;
+        //this.canciones = canciones;
+        //this.usuarios_suscritos = usuarios_suscritos;
     }
 
     public Lista(String nombre, String descripcion, Usuario creador, List<Cancion> canciones, List<Usuario> usuarios_suscritos) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.creador = creador;
-        this.canciones = canciones;
-        this.usuarios_suscritos = usuarios_suscritos;
+        //this.canciones = canciones;
+        //this.usuarios_suscritos = usuarios_suscritos;
     }
-     
 
     public int getId() {
         return id;
@@ -57,17 +87,21 @@ public class Lista {
     }
 
     public Usuario getCreador() {
-        if(this.creador.correo.equals("") || this.creador.nombre.equals("") || this.creador.foto.equals("")){
-            //creador = new UsuarioDAO().selectAllForID(creador.id);
-        }
         return creador;
     }
 
     public void setCreador(Usuario creador) {
-        this.creador = creador;
+    	this.creador = creador;
+    	List<Lista> listas = this.creador.getListas_creadas();
+    	if(listas==null) {
+    		listas = new ArrayList<Lista>();
+    	}
+    	if(!listas.contains(this)) {
+    		listas.add(this);
+    	}
     }
 
-    public List<Cancion> getCanciones() {
+    /*public List<Cancion> getCanciones() {
         if(canciones == null){
             //canciones = Lista_CancionDAO.selectAllCanciones(id);
         }
@@ -87,7 +121,7 @@ public class Lista {
 
     public void setUsuarios_suscritos(List<Usuario> usuarios_suscritos) {
         this.usuarios_suscritos = usuarios_suscritos;
-    }
+    }*/
     
     
 
@@ -105,7 +139,7 @@ public class Lista {
         cadena+="\n---------------------------------";
         return cadena;
     }
-    
+    /*
     public String toStringWithCanciones() {
         String cadena = "";
         cadena+=toString();
@@ -138,5 +172,28 @@ public class Lista {
         }
                 
         return cadena;
-    }
+    }*/
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lista other = (Lista) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+    
 }
