@@ -1,12 +1,30 @@
 package musicddbb.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+@Entity
+@Table(name="Cancion")
 public class Cancion {
+	@Id
+	@Column(name="id")
 	protected int id;
+	@Column(name="nombre")
     protected String nombre;
+	@Column(name="duracion")
     protected int duracion;
-    protected Disco disco_contenedor;
+	/*@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="id_disco")
+    protected Disco disco_contenedor;*/
+	@ManyToMany(mappedBy = "Lista")
     protected List<Lista> listas;
     
     public Cancion() {}
@@ -15,15 +33,22 @@ public class Cancion {
         this.id = id;
         this.nombre = nombre;
         this.duracion = duracion;
-        this.disco_contenedor = disco_contenedor;
+     //   this.disco_contenedor = disco_contenedor;
         this.listas = listas;
+    }
+    public Cancion(int id, String nombre, int duracion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.duracion = duracion;
+     
+     
     }
     
     public Cancion(String nombre, int duracion, Disco disco_contenedor) {
         this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
-        this.disco_contenedor = disco_contenedor;
+      //  this.disco_contenedor = disco_contenedor;
         this.listas = null;
     }
 
@@ -31,7 +56,7 @@ public class Cancion {
         this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
-        this.disco_contenedor = disco_contenedor;
+     //   this.disco_contenedor = disco_contenedor;
         this.listas = listas;
     }
 
@@ -59,7 +84,7 @@ public class Cancion {
         this.duracion = duracion;
     }
 
-    public Disco getDisco_contenedor() {
+ /*   public Disco getDisco_contenedor() {
         if(disco_contenedor.nombre.equals("") || disco_contenedor.foto.equals("")){
             //disco_contenedor = DiscoDAO.selectAllForId(disco_contenedor.id);
         }
@@ -69,16 +94,31 @@ public class Cancion {
     public void setDisco_contenedor(Disco disco_contenedor) {
         this.disco_contenedor = disco_contenedor;
     }
-
+*/
     public List<Lista> getListas() {
-        if(listas == null){
-            //listas = Lista_CancionDAO.selectAllListas(id);
-        }
+       
         return listas;
     }
 
-    public void setListas(List<Lista> listas) {
-        this.listas = listas;
+    public void setListas(Lista lista) {
+    	this.listas = listas;
+    	if(this.listas==null) {
+    		this.listas= new ArrayList<Lista>();
+    		this.listas.add(lista);
+		
+    	}
+    	if(!this.listas.contains(lista)) {
+    		this.listas.add(lista);
+    		List<Cancion> mylist = lista.getCanciones();
+    		if(mylist==null) {
+    			mylist = new ArrayList<Cancion>();
+    			mylist.add(this);
+    		}
+    		if(mylist.contains(this)) {
+    			mylist.add(this);
+    		}
+    	}
+		
     }
     @Override
     public String toString() {
@@ -90,7 +130,7 @@ public class Cancion {
         cadena+=toString();
         cadena+="\nDisco contenedor: ";
         cadena+="\n---------------------------------";
-        cadena+=disco_contenedor;
+    //    cadena+=disco_contenedor;
         cadena+="\n---------------------------------";
         return cadena;
     }

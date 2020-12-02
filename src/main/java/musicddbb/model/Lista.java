@@ -1,6 +1,5 @@
 package musicddbb.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,22 +7,17 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="lista")
-public class Lista implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
-	
+public class Lista {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
 	protected int id;
 	@Column(name="nombre")
@@ -31,14 +25,17 @@ public class Lista implements Serializable{
 	@Column(name="descripcion")
     protected String descripcion;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade= {CascadeType.MERGE})
+	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_usuario")
     protected Usuario creador;
-	
-    /*protected List<Cancion> canciones;
-     */
-	@ManyToMany(mappedBy="listas_suscrito", cascade= {CascadeType.ALL})
-    protected List<Usuario> usuarios_suscritos = new ArrayList<Usuario>();
+	@JoinTable(
+	        name = "lista_cancion",
+	        joinColumns = @JoinColumn(name = "Id_lista", nullable = false),
+	        inverseJoinColumns = @JoinColumn(name="Id_cancion", nullable = false)
+	    )
+	    @ManyToMany(cascade = CascadeType.ALL)
+    protected List<Cancion> canciones;
+    protected List<Usuario> usuarios_suscritos;
 
     public Lista() {
         this.id = -1;
@@ -46,11 +43,6 @@ public class Lista implements Serializable{
     
     public Lista(int id, String nombre, String descripcion) {
     	this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-    }
-    
-    public Lista( String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
@@ -118,34 +110,37 @@ public class Lista implements Serializable{
     	}
     }
 
-    /*public List<Cancion> getCanciones() {
-        if(canciones == null){
-            //canciones = Lista_CancionDAO.selectAllCanciones(id);
-        }
+    public List<Cancion> getCanciones() {
         return canciones;
     }
-
-    public void setCanciones(List<Cancion> canciones) {
-        this.canciones = canciones;
+    
+    public void setCanciones(Cancion c) {
+    	if(this.canciones==null) {
+    		this.canciones= new ArrayList<Cancion>();
+    		this.canciones.add(c);
+    	}
+    	if(!this.canciones.contains(c)) {
+    		this.canciones.add(c);
+    		List<Lista> mylist = c.getListas();
+    		if(mylist==null) {
+    			mylist = new ArrayList<Lista>();
+    			mylist.add(this);
+    		}
+    		if(mylist.contains(this)) {
+    			mylist.add(this);
+    		}
+    	}
     }
-    */
 
-    public List<Usuario> getUsuarios_suscritos() {
+    /* public List<Usuario> getUsuarios_suscritos() {
+        if(usuarios_suscritos == null){
+            //usuarios_suscritos = SuscripcionDAO.selectAllUsuario(id);
+        }
         return usuarios_suscritos;
     }
-
     public void setUsuarios_suscritos(List<Usuario> usuarios_suscritos) {
-    	this.usuarios_suscritos = usuarios_suscritos;
-		for(Usuario u: usuarios_suscritos) {
-			List<Lista> listas = u.getListas_suscrito();
-			if(listas==null) {
-				listas = new ArrayList<Lista>();
-			}
-			if(!listas.contains(this)) {
-				listas.add(this);
-			}
-		}
-    }
+        this.usuarios_suscritos = usuarios_suscritos;
+    }*/
     
     
 
@@ -163,7 +158,7 @@ public class Lista implements Serializable{
         cadena+="\n---------------------------------";
         return cadena;
     }
-    /*
+    
     public String toStringWithCanciones() {
         String cadena = "";
         cadena+=toString();
@@ -181,6 +176,7 @@ public class Lista implements Serializable{
         return cadena;
     }
     
+    /*
     public String toStringWithUsuarios_Suscritos() {
         String cadena = "";
         cadena+=toString();
