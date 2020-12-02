@@ -1,20 +1,29 @@
 package musicddbb.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="lista")
-public class Lista {
+public class Lista implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
 	protected int id;
 	@Column(name="nombre")
@@ -22,11 +31,14 @@ public class Lista {
 	@Column(name="descripcion")
     protected String descripcion;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade= {CascadeType.MERGE})
     @JoinColumn(name="id_usuario")
     protected Usuario creador;
+	
     /*protected List<Cancion> canciones;
-    protected List<Usuario> usuarios_suscritos;*/
+     */
+	@ManyToMany(mappedBy="listas_suscrito", cascade= {CascadeType.ALL})
+    protected List<Usuario> usuarios_suscritos = new ArrayList<Usuario>();
 
     public Lista() {
         this.id = -1;
@@ -34,6 +46,11 @@ public class Lista {
     
     public Lista(int id, String nombre, String descripcion) {
     	this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+    }
+    
+    public Lista( String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
@@ -111,17 +128,24 @@ public class Lista {
     public void setCanciones(List<Cancion> canciones) {
         this.canciones = canciones;
     }
+    */
 
     public List<Usuario> getUsuarios_suscritos() {
-        if(usuarios_suscritos == null){
-            //usuarios_suscritos = SuscripcionDAO.selectAllUsuario(id);
-        }
         return usuarios_suscritos;
     }
 
     public void setUsuarios_suscritos(List<Usuario> usuarios_suscritos) {
-        this.usuarios_suscritos = usuarios_suscritos;
-    }*/
+    	this.usuarios_suscritos = usuarios_suscritos;
+		for(Usuario u: usuarios_suscritos) {
+			List<Lista> listas = u.getListas_suscrito();
+			if(listas==null) {
+				listas = new ArrayList<Lista>();
+			}
+			if(!listas.contains(this)) {
+				listas.add(this);
+			}
+		}
+    }
     
     
 

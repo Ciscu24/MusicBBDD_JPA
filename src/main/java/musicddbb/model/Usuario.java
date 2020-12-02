@@ -1,13 +1,19 @@
 package musicddbb.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -15,7 +21,10 @@ import javax.persistence.Table;
 @Table(name="usuario")
 public class Usuario implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="id")
 	protected int id;
 	@Column(name="correo")
@@ -25,10 +34,12 @@ public class Usuario implements Serializable{
 	@Column(name="foto")
 	protected String foto;
 	
-	@OneToMany(mappedBy="creador", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-	protected List<Lista> listas_creadas;
+	@OneToMany(mappedBy="creador", cascade=CascadeType.MERGE, fetch = FetchType.LAZY)
+	protected List<Lista> listas_creadas = new ArrayList<Lista>();
 	
-	//protected List<Lista> listas_suscrito;
+	@JoinTable(name="usuarios_suscritos", joinColumns= @JoinColumn(name="id_usuario"), inverseJoinColumns= @JoinColumn(name="id_lista"))
+	@ManyToMany(cascade= {CascadeType.ALL})
+	protected List<Lista> listas_suscrito = new ArrayList<Lista>();
 
 	public Usuario() {
 	}
@@ -44,12 +55,9 @@ public class Usuario implements Serializable{
 	}
 
 	public Usuario(String correo, String nombre, String foto) {
-		this.id = -1;
 		this.correo = correo;
 		this.nombre = nombre;
 		this.foto = foto;
-		//this.listas_creadas = null;
-		//this.listas_suscrito = null;
 	}
 	
 	public Usuario(int id, String correo, String nombre, String foto) {
@@ -113,17 +121,44 @@ public class Usuario implements Serializable{
 		}
 	}
 
-	/*
 	public List<Lista> getListas_suscrito() {
-		if (listas_suscrito == null) {
-			// listas_suscrito = SuscripcionDAO.selectAllListas(id);
-		}
 		return listas_suscrito;
 	}
 
 	public void setListas_suscrito(List<Lista> listas_suscrito) {
 		this.listas_suscrito = listas_suscrito;
-	}*/
+		for(Lista l: listas_suscrito) {
+			List<Usuario> usuarios = l.getUsuarios_suscritos();
+			if(usuarios==null) {
+				usuarios = new ArrayList<Usuario>();
+			}
+			if(!usuarios.contains(this)) {
+				usuarios.add(this);
+			}
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

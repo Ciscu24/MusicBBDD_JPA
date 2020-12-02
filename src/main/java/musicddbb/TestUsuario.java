@@ -46,10 +46,11 @@ public class TestUsuario {
 		
 		emf = Persistence.createEntityManagerFactory("mysql");
 		manager = emf.createEntityManager();
+		Usuario usuario = new Usuario("ciscu6@gmail.com", "Ciscu", "ciscu24.png");
 		
-		List<String> list=manager.createQuery("FROM Usuario").getResultList();
-	
-		System.out.println(list);
+		manager.getTransaction().begin();
+        manager.persist(usuario);
+        manager.getTransaction().commit();
         
     }
 	
