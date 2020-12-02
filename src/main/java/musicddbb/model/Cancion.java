@@ -3,6 +3,7 @@ package musicddbb.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +25,7 @@ public class Cancion {
 	/*@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_disco")
     protected Disco disco_contenedor;*/
-	@ManyToMany(mappedBy = "Lista")
+	@ManyToMany(mappedBy = "canciones", cascade= {CascadeType.ALL})
     protected List<Lista> listas;
     
     public Cancion() {}

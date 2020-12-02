@@ -34,14 +34,8 @@ public class Usuario implements Serializable{
 	@Column(name="foto")
 	protected String foto;
 	
-<<<<<<< HEAD
 	@OneToMany(mappedBy="creador", cascade=CascadeType.MERGE, fetch = FetchType.LAZY)
 	protected List<Lista> listas_creadas = new ArrayList<Lista>();
-=======
-	@OneToMany(mappedBy="creador", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-	
-	protected List<Lista> listas_creadas;
->>>>>>> branch 'master' of https://github.com/Ciscu24/MusicBBDD_JPA.git
 	
 	@JoinTable(name="usuarios_suscritos", joinColumns= @JoinColumn(name="id_usuario"), inverseJoinColumns= @JoinColumn(name="id_lista"))
 	@ManyToMany(cascade= {CascadeType.ALL})

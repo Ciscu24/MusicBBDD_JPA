@@ -29,17 +29,15 @@ public class Lista {
     @JoinColumn(name="id_usuario")
     protected Usuario creador;
 	@JoinTable(
-	        name = "lista_cancion",
-	        joinColumns = @JoinColumn(name = "Id_lista", nullable = false),
-	        inverseJoinColumns = @JoinColumn(name="Id_cancion", nullable = false)
+	        name = "listas",
+	        joinColumns = @JoinColumn(name = "id_lista", nullable = false),
+	        inverseJoinColumns = @JoinColumn(name="id_cancion", nullable = false)
 	    )
 	    @ManyToMany(cascade = CascadeType.ALL)
     protected List<Cancion> canciones;
-    protected List<Usuario> usuarios_suscritos;
-
-    public Lista() {
-        this.id = -1;
-    }
+	
+	@ManyToMany(mappedBy="listas_suscrito", cascade= {CascadeType.ALL})
+    protected List<Usuario> usuarios_suscritos = new ArrayList<Usuario>();
     
     public Lista(int id, String nombre, String descripcion) {
     	this.id = id;
@@ -132,17 +130,22 @@ public class Lista {
     	}
     }
 
-    /* public List<Usuario> getUsuarios_suscritos() {
-        if(usuarios_suscritos == null){
-            //usuarios_suscritos = SuscripcionDAO.selectAllUsuario(id);
-        }
+    public List<Usuario> getUsuarios_suscritos() {
         return usuarios_suscritos;
     }
+    
     public void setUsuarios_suscritos(List<Usuario> usuarios_suscritos) {
-        this.usuarios_suscritos = usuarios_suscritos;
-    }*/
-    
-    
+    	this.usuarios_suscritos = usuarios_suscritos;
+		for(Usuario u: usuarios_suscritos) {
+			List<Lista> listas = u.getListas_suscrito();
+			if(listas==null) {
+				listas = new ArrayList<Lista>();
+			}
+			if(!listas.contains(this)) {
+				listas.add(this);
+			}
+		}
+    }
 
     @Override
     public String toString() {
@@ -176,7 +179,6 @@ public class Lista {
         return cadena;
     }
     
-    /*
     public String toStringWithUsuarios_Suscritos() {
         String cadena = "";
         cadena+=toString();
@@ -192,7 +194,7 @@ public class Lista {
         }
                 
         return cadena;
-    }*/
+    }
 
 	@Override
 	public int hashCode() {
