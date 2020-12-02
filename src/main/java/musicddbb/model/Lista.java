@@ -3,11 +3,14 @@ package musicddbb.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,8 +28,14 @@ public class Lista {
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_usuario")
     protected Usuario creador;
-    /*protected List<Cancion> canciones;
-    protected List<Usuario> usuarios_suscritos;*/
+	@JoinTable(
+	        name = "lista_cancion",
+	        joinColumns = @JoinColumn(name = "Id_lista", nullable = false),
+	        inverseJoinColumns = @JoinColumn(name="Id_cancion", nullable = false)
+	    )
+	    @ManyToMany(cascade = CascadeType.ALL)
+    protected List<Cancion> canciones;
+    protected List<Usuario> usuarios_suscritos;
 
     public Lista() {
         this.id = -1;
@@ -101,18 +110,29 @@ public class Lista {
     	}
     }
 
-    /*public List<Cancion> getCanciones() {
-        if(canciones == null){
-            //canciones = Lista_CancionDAO.selectAllCanciones(id);
-        }
+    public List<Cancion> getCanciones() {
         return canciones;
     }
-
-    public void setCanciones(List<Cancion> canciones) {
-        this.canciones = canciones;
+    
+    public void setCanciones(Cancion c) {
+    	if(this.canciones==null) {
+    		this.canciones= new ArrayList<Cancion>();
+    		this.canciones.add(c);
+    	}
+    	if(!this.canciones.contains(c)) {
+    		this.canciones.add(c);
+    		List<Lista> mylist = c.getListas();
+    		if(mylist==null) {
+    			mylist = new ArrayList<Lista>();
+    			mylist.add(this);
+    		}
+    		if(mylist.contains(this)) {
+    			mylist.add(this);
+    		}
+    	}
     }
 
-    public List<Usuario> getUsuarios_suscritos() {
+    /* public List<Usuario> getUsuarios_suscritos() {
         if(usuarios_suscritos == null){
             //usuarios_suscritos = SuscripcionDAO.selectAllUsuario(id);
         }
@@ -139,7 +159,7 @@ public class Lista {
         cadena+="\n---------------------------------";
         return cadena;
     }
-    /*
+    
     public String toStringWithCanciones() {
         String cadena = "";
         cadena+=toString();
@@ -157,6 +177,7 @@ public class Lista {
         return cadena;
     }
     
+    /*
     public String toStringWithUsuarios_Suscritos() {
         String cadena = "";
         cadena+=toString();

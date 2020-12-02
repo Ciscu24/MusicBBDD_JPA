@@ -26,6 +26,7 @@ public class Usuario implements Serializable{
 	protected String foto;
 	
 	@OneToMany(mappedBy="creador", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	
 	protected List<Lista> listas_creadas;
 	
 	//protected List<Lista> listas_suscrito;
