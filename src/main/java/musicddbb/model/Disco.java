@@ -3,12 +3,29 @@ package musicddbb.model;
 import java.sql.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "lista")
 public class Disco {
+	@Id
+	@Column(name="id")
 	protected int id;
+	@Column(name = "nombre")
     protected String nombre;
+	@Column(name = "foto")
     protected String foto;
+	
+	
     protected Artista creador;
+	
+    
     protected Date fecha_produccion;
+    
+    
     protected List<Cancion> canciones;
 
     public Disco(int id) {

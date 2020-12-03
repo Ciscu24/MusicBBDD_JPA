@@ -2,11 +2,19 @@ package musicddbb.model;
 
 import java.util.List;
 
+
+
 public class Artista {
+
 	protected int id;
+
     protected String nombre;
+
     protected String nacionalidad;
+
     protected String foto;
+    
+	
     protected List<Disco> disco;
 
     public Artista() {
