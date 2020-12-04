@@ -1,4 +1,4 @@
-package musicddbb.model;
+0package musicddbb.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +22,9 @@ public class Cancion {
     protected String nombre;
 	@Column(name="duracion")
     protected int duracion;
-	/*@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_disco")
-    protected Disco disco_contenedor;*/
+    protected Disco disco_contenedor;
 	@ManyToMany(mappedBy = "canciones", cascade= {CascadeType.ALL})
     protected List<Lista> listas;
     
@@ -85,17 +85,23 @@ public class Cancion {
         this.duracion = duracion;
     }
 
- /*   public Disco getDisco_contenedor() {
-        if(disco_contenedor.nombre.equals("") || disco_contenedor.foto.equals("")){
-            //disco_contenedor = DiscoDAO.selectAllForId(disco_contenedor.id);
-        }
+    public Disco getDisco_contenedor() {
+
         return disco_contenedor;
     }
 
     public void setDisco_contenedor(Disco disco_contenedor) {
         this.disco_contenedor = disco_contenedor;
+        List<Cancion> canciones= this.disco_contenedor.getCanciones();
+        if(canciones==null) {
+        	canciones=new ArrayList<Cancion>();
+        }
+        if(!canciones.contains(this)) {
+        	canciones.add(this);
+        }
+       
     }
-*/
+
     public List<Lista> getListas() {
        
         return listas;

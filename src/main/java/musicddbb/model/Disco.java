@@ -3,9 +3,12 @@ package musicddbb.model;
 import java.sql.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,10 +25,10 @@ public class Disco {
 	
     protected Artista creador;
 	
-    
+    @Column(name = "fecha_produccion")
     protected Date fecha_produccion;
     
-    
+    @OneToMany(mappedBy = "disco_contenedor", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     protected List<Cancion> canciones;
 
     public Disco(int id) {
@@ -103,14 +106,15 @@ public class Disco {
     }
 
     public List<Cancion> getCanciones() {
-        if(canciones==null){
-            //canciones = CancionDAO.selectAll(id);
-        }
         return canciones;
     }
 
     public void setCanciones(List<Cancion> canciones) {
         this.canciones = canciones;
+        for(Cancion c:this.canciones) {
+        	c.setDisco_contenedor(this);
+        	
+        }
     }
     
     @Override
