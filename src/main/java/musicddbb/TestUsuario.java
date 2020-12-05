@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import musicddbb.model.Lista;
 import musicddbb.model.Usuario;
+import musicddbb.utils.Connection;
 
 public class TestUsuario {
 
@@ -44,19 +45,23 @@ public class TestUsuario {
 		manager.getTransaction().commit();*/
         
 		
-		emf = Persistence.createEntityManagerFactory("mysql");
+		emf = Persistence.createEntityManagerFactory("aplicacion");
 		manager = emf.createEntityManager();
+		manager = Connection.connectToH2();
 		Usuario usuario = new Usuario("ciscu6@gmail.com", "Ciscu", "ciscu24.png");
+		Usuario usuario2 = new Usuario("edu@gmail.com", "Edu", "Edu.png");
 		
 		manager.getTransaction().begin();
         manager.persist(usuario);
+        manager.persist(usuario2);
         manager.getTransaction().commit();
+        
+        list();
         
     }
 	
 	public static void list() {
-		EntityManager manager=emf.createEntityManager();
-		List<Usuario> usuarios=manager.createQuery("FROM Usuario").getResultList();
+		List<Usuario> usuarios = Connection.connectToH2().createQuery("FROM Usuario").getResultList();
 		System.out.println("Usuarios: "+usuarios.size());
 		for(Usuario a:usuarios) {
 			System.out.println(a);
