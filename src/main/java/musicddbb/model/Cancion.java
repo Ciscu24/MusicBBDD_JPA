@@ -22,9 +22,9 @@ public class Cancion {
     protected String nombre;
 	@Column(name="duracion")
     protected int duracion;
-	@ManyToOne(fetch=FetchType.LAZY)
+	/*@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_disco")
-    protected Disco disco_contenedor;
+    protected Disco disco_contenedor;*/
 	@ManyToMany(mappedBy = "canciones", cascade= {CascadeType.ALL})
     protected List<Lista> listas;
     
