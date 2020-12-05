@@ -38,7 +38,9 @@ public class Lista {
 	
 	@ManyToMany(mappedBy="listas_suscrito", cascade= {CascadeType.ALL})
     protected List<Usuario> usuarios_suscritos = new ArrayList<Usuario>();
-    
+	   public Lista() {
+	 
+	    }
     public Lista(int id, String nombre, String descripcion) {
     	this.id = id;
         this.nombre = nombre;
