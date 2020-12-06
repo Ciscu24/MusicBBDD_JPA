@@ -1,29 +1,19 @@
 package musicddbb.model;
 
-public class UsuarioDAO extends Usuario {
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-	private boolean persist;
+import javax.persistence.EntityManager;
+
+import musicddbb.utils.Connection;
+
+public class UsuarioDAO extends Usuario {
+	
+	private static EntityManager manager;
 
 	public UsuarioDAO() {
 		super();
-		persist = false;
-	}
-
-	public UsuarioDAO(int id, String correo, String nombre, String foto, List<Lista> listas_creadas,
-			List<Lista> listas_suscrito) {
-		super(id, correo, nombre, foto, listas_creadas, listas_suscrito);
-		persist = false;
-	}
-
-	public UsuarioDAO(String nombre, String nacionalidad, String foto, List<Lista> listas_creadas,
-			List<Lista> listas_suscrito) {
-		super(-1, nombre, nacionalidad, foto, listas_creadas, listas_suscrito);
-		persist = false;
-	}
-
-	public UsuarioDAO(String nombre, String nacionalidad, String foto) {
-		super(-1, nombre, nacionalidad, foto, null, null);
-		persist = false;
 	}
 
 	public UsuarioDAO(Usuario u) {
@@ -35,20 +25,9 @@ public class UsuarioDAO extends Usuario {
 		this.listas_suscrito = u.listas_suscrito;
 	}
 
-	public void persist() {
-		persist = true;
-	}
-
-	public void detatch() {
-		persist = false;
-	}
-
-	@Override
+	/*@Override
 	public void setId(int id) {
 		super.setId(id);
-		if (persist) {
-			save();
-		}
 	}
 
 	@Override
@@ -89,7 +68,7 @@ public class UsuarioDAO extends Usuario {
 		if (persist) {
 			save();
 		}
-	}
+	}*/
 
 	/**
 	 * Metodo que guarda un usuario en la base de datos
@@ -101,35 +80,32 @@ public class UsuarioDAO extends Usuario {
 		int result = -1;
 
 		try {
-			java.sql.Connection csql = ConnectionUtil.getConnection();
+			manager = Connection.connectToMysql();
 
 			if (this.id > 0) {
-				// UPDATE
-				String q = "UPDATE usuario SET correo = ?, nombre = ?, foto = ? WHERE id = ?";
-				PreparedStatement ps = csql.prepareStatement(q);
-				ps.setString(1, correo);
-				ps.setString(2, nombre);
-				ps.setString(3, foto);
-				ps.setInt(4, id);
-				result = ps.executeUpdate();
+				//UPDATE
+				manager.getTransaction().begin();
+				manager.createNativeQuery("UPDATE Usuario SET correo = ?, nombre = ?, foto = ? WHERE id = ?")
+		        .setParameter(1, this.correo)
+		        .setParameter(2, this.nombre)
+		        .setParameter(3, this.foto)
+		        .setParameter(4, this.id)
+		        .executeUpdate();
+				manager.getTransaction().commit();
 			} else {
 				// INSERT
-				String q = "INSERT INTO usuario (id,correo,nombre,foto) VALUES(NULL,?,?,?)";
-				PreparedStatement ps = csql.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
-				ps.setString(1, correo);
-				ps.setString(2, nombre);
-				ps.setString(3, foto);
-				result = ps.executeUpdate();
-				try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						result = generatedKeys.getInt(1); // devuelve el ultimo id insertado
-					}
-				}
-				this.id = result;
+				manager.getTransaction().begin();
+				manager.createNativeQuery("INSERT INTO Usuario (id,correo,nombre,foto) VALUES (?,?,?,?)")
+		        .setParameter(1, this.id)
+		        .setParameter(2, this.correo)
+		        .setParameter(3, this.nombre)
+		        .setParameter(4, this.foto)
+		        .executeUpdate();
+				manager.getTransaction().commit();
 			}
 
-		} catch (SQLException ex) {
-			Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex) {
+			System.out.println(ex);
 		}
 
 		return result;
@@ -152,39 +128,30 @@ public class UsuarioDAO extends Usuario {
 	 * @return devuelve una lista de usuarios
 	 */
 	public static List<Usuario> selectAll(String pattern) {
-		List<Usuario> result = new ArrayList<>();
+		List<Usuario> result = new ArrayList();
 
 		try {
-			java.sql.Connection csql = ConnectionUtil.getConnection();
-			String q = "SELECT * FROM usuario";
+			manager = Connection.connectToMysql();
+			manager.getTransaction().begin();
+			
+			String q = "FROM Usuario";
 
 			if (pattern.length() > 0) {
 				q += " WHERE nombre LIKE ?";
 			}
-
-			PreparedStatement ps = csql.prepareStatement(q);
+			
 
 			if (pattern.length() > 0) {
-				ps.setString(1, pattern + "%");
+				result = manager.createQuery("FROM Usuario WHERE nombre LIKE '"+ pattern +"%'")
+						.getResultList();
+			}else {
+				result = manager.createQuery("FROM Usuario").getResultList();
 			}
 
-			ResultSet rs = ps.executeQuery();
-
-			if (rs != null) {
-				while (rs.next()) {
-					Usuario u = new Usuario();
-					u.setId(rs.getInt("id"));
-					u.setCorreo(rs.getString("correo"));
-					u.setNombre(rs.getString("nombre"));
-					u.setFoto(rs.getString("foto"));
-					u.setListas_creadas(null);
-					u.setListas_suscrito(null);
-					result.add(u);
-				}
-			}
-		} catch (SQLException ex) {
+			
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
 			System.out.println(ex);
-			Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return result;
@@ -197,30 +164,24 @@ public class UsuarioDAO extends Usuario {
 	 * @return devuelve una lista de usuarios
 	 */
 	public static Usuario selectAllForID(int id) {
-		Usuario result = new Usuario();
+		Usuario result = null;
 
 		try {
-			java.sql.Connection csql = ConnectionUtil.getConnection();
-			String q = "SELECT * FROM usuario WHERE id = ?";
+			manager = Connection.connectToMysql();
+			manager.getTransaction().begin();
 
-			PreparedStatement ps = csql.prepareStatement(q);
-
-			ps.setInt(1, id);
-
-			ResultSet rs = ps.executeQuery();
-
-			if (rs != null) {
-				rs.next();
-				result.id = rs.getInt("id");
-				result.correo = rs.getString("correo");
-				result.nombre = rs.getString("nombre");
-				result.foto = rs.getString("foto");
-				result.listas_creadas = null;
-				result.listas_suscrito = null;
+			String q = "FROM Usuario WHERE id = ";
+			
+			List<Usuario> usuarios = manager.createQuery(q + id).getResultList();
+			
+			if(usuarios.size()!=0) {
+				result = usuarios.get(0);
 			}
-		} catch (SQLException ex) {
+			
+			manager.getTransaction().commit();
+
+		} catch (Exception ex) {
 			System.out.println(ex);
-			Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return result;
@@ -234,30 +195,23 @@ public class UsuarioDAO extends Usuario {
 	 * @return devuelve una lista de usuarios
 	 */
 	public static Usuario selectAllForNombre(String nombre) {
-		Usuario result = new Usuario();
+		Usuario result = null;
 
 		try {
-			java.sql.Connection csql = ConnectionUtil.getConnection();
-			String q = "SELECT * FROM usuario WHERE nombre = ?";
+			manager = Connection.connectToMysql();
+			manager.getTransaction().begin();
 
-			PreparedStatement ps = csql.prepareStatement(q);
-
-			ps.setString(1, nombre);
-
-			ResultSet rs = ps.executeQuery();
-
-			if (rs != null) {
-				rs.next();
-				result.id = rs.getInt("id");
-				result.correo = rs.getString("correo");
-				result.nombre = rs.getString("nombre");
-				result.foto = rs.getString("foto");
-				result.listas_creadas = null;
-				result.listas_suscrito = null;
+			String q = "FROM Usuario WHERE nombre = ";
+			
+			List<Usuario> usuarios = manager.createQuery("FROM Usuario WHERE nombre = '"+ nombre +"'").getResultList();
+			
+			if(usuarios.size()!=0) {
+				result = usuarios.get(0);
 			}
-		} catch (SQLException ex) {
+			
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
 			System.out.println(ex);
-			Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return result;
@@ -268,21 +222,24 @@ public class UsuarioDAO extends Usuario {
 	 *
 	 * @return -1 si no se ha borrado o el id del usuario borrado
 	 */
-	public int remove() {
-		int result = -1;
+	public boolean remove() {
+		boolean result = false;
 
 		if (this.id > 0) {
 
 			try {
-				java.sql.Connection csql = ConnectionUtil.getConnection();
-				String q = "DELETE FROM usuario WHERE id = " + this.id;
-				PreparedStatement ps = csql.prepareStatement(q);
-				result = ps.executeUpdate();
-				if (result > 0) {
-					this.id = -1;
+				
+				manager = Connection.connectToMysql();
+				manager.getTransaction().begin();
+				
+				if(manager.createQuery("DELETE FROM Usuario WHERE id = " + this.id).executeUpdate() == 1) {
+					result = true;
 				}
-			} catch (SQLException ex) {
-				Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+				
+				manager.getTransaction().commit();
+
+			} catch (Exception ex) {
+				System.out.println(ex);
 			}
 		}
 

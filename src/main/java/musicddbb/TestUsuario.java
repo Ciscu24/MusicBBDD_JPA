@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import musicddbb.model.Lista;
 import musicddbb.model.Usuario;
+import musicddbb.model.UsuarioDAO;
 import musicddbb.utils.Connection;
 
 public class TestUsuario {
@@ -45,23 +46,29 @@ public class TestUsuario {
 		manager.getTransaction().commit();*/
         
 		
-		emf = Persistence.createEntityManagerFactory("aplicacion");
-		manager = emf.createEntityManager();
-		manager = Connection.connectToH2();
-		Usuario usuario = new Usuario("ciscu6@gmail.com", "Ciscu", "ciscu24.png");
-		Usuario usuario2 = new Usuario("edu@gmail.com", "Edu", "Edu.png");
+		manager = Connection.connectToMysql();
+		Usuario usuario = new Usuario(1, "ciscu6@gmail.com", "Ciscu", "ciscu24.png");
+		Usuario usuario2 = new Usuario(2, "edu@gmail.com", "Edu", "Edu.png");
 		
-		manager.getTransaction().begin();
-        manager.persist(usuario);
-        manager.persist(usuario2);
-        manager.getTransaction().commit();
+		Lista l1 = new Lista(1, "PlayList24", "Esta playlist es de ciscu24");
+        Lista l2 = new Lista(2, "Music24", "Esta es otra playlist de ciscu24");
         
-        list();
+        List<Lista> listasdelistas = new ArrayList<Lista>();
+        listasdelistas.add(l1);
+        listasdelistas.add(l2);
+		
+		
+        manager.getTransaction().begin();
+		manager.getTransaction().commit();
+
+		
+		
+        //list();
         
     }
 	
 	public static void list() {
-		List<Usuario> usuarios = Connection.connectToH2().createQuery("FROM Usuario").getResultList();
+		List<Usuario> usuarios = Connection.connectToMysql().createQuery("FROM Usuario").getResultList();
 		System.out.println("Usuarios: "+usuarios.size());
 		for(Usuario a:usuarios) {
 			System.out.println(a);
