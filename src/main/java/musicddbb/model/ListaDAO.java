@@ -19,6 +19,8 @@ public class ListaDAO extends Lista {
 		// TODO Auto-generated constructor stub
 		persist = false;
 	}
+	
+	
 
 	public ListaDAO(int id, String nombre, String descripcion, Usuario creador, List<Cancion> canciones,
 			List<Usuario> usuarios_suscritos) {
@@ -50,6 +52,13 @@ public class ListaDAO extends Lista {
 		persist = false;
 		// TODO Auto-generated constructor stub
 	}
+
+	private ListaDAO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
 
 	public void persist() {
 		persist = true;
@@ -198,10 +207,10 @@ public class ListaDAO extends Lista {
 	}
 
 	/**
-	 * Funcion que selecciona por id todas las listas de la base de datos
+	 * Funcion que selecciona por id una lista de la base de datos
 	 *
 	 * @param id id por lo que se filtra el select
-	 * @return devuelve una lista de lists(Playlist)
+	 * @return devuelve una lista(PlayList)
 	 */
 	public static Lista selectAllForID(int id) {
 		Lista result = null;

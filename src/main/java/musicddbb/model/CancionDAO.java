@@ -182,7 +182,7 @@ public class CancionDAO extends Cancion {
 	}
 	
 	/**
-	 * Funcion que selecciona por nombre todas las canciones de la lista base de datos que
+	 * Funcion que selecciona por nombre todas las canciones de la lista en concreto pasando su id base de datos que
 	 * sea por el pattern
 	 *
 	 * @param pattern Palabra por lo que se filtra el select
@@ -221,10 +221,10 @@ public class CancionDAO extends Cancion {
 	}
 
 	/**
-	 * Funcion que selecciona por id todos las canciones de la base de datos
+	 * Funcion que selecciona por id la cancion de la base de datos
 	 *
 	 * @param id id por lo que se filtra el select
-	 * @return devuelve una lista de Canciones
+	 * @return devuelve una Cancion
 	 */
 	public static Cancion selectAllForID(int id) {
 		Cancion result = null;
@@ -251,20 +251,41 @@ public class CancionDAO extends Cancion {
 	}
 	
 	/**
-	 * Funcion que selecciona por id todos las canciones de la base de datos
+	 * Funcion que selecciona por nombre todas las canciones de la lista en concreto pasando su id base de datos que
+	 * sea por el pattern
 	 *
-	 * @param id id por lo que se filtra el select
-	 * @return devuelve una lista de Canciones
+	 * @param pattern Palabra por lo que se filtra el select
+	 * @return devuelve una lista de Canciones (version 2 )
 	 */
 
+	   public static List<Cancion> selectAllLista(int id_lista) {
+	       List<Cancion> result = new ArrayList();
 
+	       try {
+	    	   
+	    	   manager = Connection.connectToMysql();
+	    	   manager.getTransaction().begin();
+	    	   
+	    	   
+	    	   Lista  L = manager.find(Lista.class, id_lista);
+	    	   
+	    	   result = L.getCanciones();	
+				
+	    	   manager.getTransaction().commit();
+	    	   
+	       } catch (Exception ex) {
+	           System.out.println(ex);
+	       }
+	       
+	       return result;
+	   }
 
 	/**
-	 * Funcion que selecciona por nombre todos las Canciones de la base de datos que
+	 * Funcion que selecciona por nombre la primera cancion de la base de datos que
 	 * sea por el pattern
 	 * 
 	 * @param pattern Palabra por lo que se filtra el select
-	 * @return devuelve una lista de Canciones
+	 * @return devuelve una Cancion
 	 */
 	public static Cancion selectAllForNombre(String nombre) {
 		Cancion result = null;

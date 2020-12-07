@@ -43,8 +43,18 @@ public class Lista {
     protected List<Usuario> usuarios_suscritos = new ArrayList<Usuario>();
 	
 	public Lista() {}
+	
+	
 	    
-    public Lista(int id, String nombre, String descripcion) {
+    public Lista(String nombre, String descripcion) {
+		super();
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
+
+
+
+	public Lista(int id, String nombre, String descripcion) {
     	this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
