@@ -133,15 +133,15 @@ public class ListaDAO extends Lista {
 			if (this.id > 0) {
 				// UPDATE
 				manager.getTransaction().begin();
-				manager.createNativeQuery("UPDATE Lista SET nombre = ?, descripcion = ?, WHERE id = ?")
-						.setParameter(1, this.nombre).setParameter(2, this.descripcion).setParameter(3, this.id)
+				manager.createNativeQuery("UPDATE Lista SET nombre = ?, descripcion = ?, id_usuario = ? WHERE id = ?")
+						.setParameter(1, this.nombre).setParameter(2, this.descripcion).setParameter(3, this.creador.id).setParameter(4, this.id)
 						.executeUpdate();
 				manager.getTransaction().commit();
 			} else {
 				// INSERT
 				manager.getTransaction().begin();
-				manager.createNativeQuery("INSERT INTO Lista (id,nombre,descripcion) VALUES (?,?,?)")
-						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.descripcion)
+				manager.createNativeQuery("INSERT INTO Lista (id,nombre,descripcion, id_usuario) VALUES (?,?,?,?)")
+						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.descripcion).setParameter(4, this.creador.id)
 						.executeUpdate();
 				manager.getTransaction().commit();
 			}
@@ -272,7 +272,7 @@ public class ListaDAO extends Lista {
 				manager = Connection.connectToMysql();
 				manager.getTransaction().begin();
 
-				if (manager.createQuery("DELETE FROM lista WHERE id = " + this.id).executeUpdate() == 1) {
+				if (manager.createQuery("DELETE FROM Lista WHERE id = " + this.id).executeUpdate() == 1) {
 					result = true;
 				}
 

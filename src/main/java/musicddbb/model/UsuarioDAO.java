@@ -10,10 +10,12 @@ import musicddbb.utils.Connection;
 
 public class UsuarioDAO extends Usuario {
 	
+	private boolean persist;
 	private static EntityManager manager;
 
 	public UsuarioDAO() {
 		super();
+		persist = false;
 	}
 
 	public UsuarioDAO(Usuario u) {
@@ -23,11 +25,15 @@ public class UsuarioDAO extends Usuario {
 		this.foto = u.foto;
 		this.listas_creadas = u.listas_creadas;
 		this.listas_suscrito = u.listas_suscrito;
+		persist = false;
 	}
 
-	/*@Override
+	@Override
 	public void setId(int id) {
 		super.setId(id);
+		if(persist){
+			save();
+		}
 	}
 
 	@Override
@@ -68,7 +74,23 @@ public class UsuarioDAO extends Usuario {
 		if (persist) {
 			save();
 		}
-	}*/
+	}
+	
+	public void persist() {
+		persist = true;
+	}
+	
+	public void detatch() {
+		persist = false;
+	}
+	
+	public boolean isPersist() {
+		return persist;
+	}
+
+	public void setPersist(boolean persist) {
+		this.persist = persist;
+	}
 
 	/**
 	 * Metodo que guarda un usuario en la base de datos

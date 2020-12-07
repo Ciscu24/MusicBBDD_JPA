@@ -38,8 +38,8 @@ public class Usuario implements Serializable{
 	@OneToMany(mappedBy="creador", cascade=CascadeType.MERGE, fetch = FetchType.LAZY)
 	protected List<Lista> listas_creadas = new ArrayList<Lista>();
 	
-	@JoinTable(name="usuarios_suscritos", joinColumns= @JoinColumn(name="id_usuario"), inverseJoinColumns= @JoinColumn(name="id_lista"))
-	@ManyToMany(cascade= {CascadeType.ALL})
+	@JoinTable(name="suscripcion", joinColumns= {@JoinColumn(name="id_usuario")}, inverseJoinColumns= {@JoinColumn(name="id_lista")})
+	@ManyToMany(cascade= {CascadeType.MERGE})
 	protected List<Lista> listas_suscrito = new ArrayList<Lista>();
 
 	public Usuario() {

@@ -9,6 +9,8 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import musicddbb.model.Lista;
+import musicddbb.model.ListaDAO;
+import musicddbb.model.SuscripcionDAO;
 import musicddbb.model.Usuario;
 import musicddbb.model.UsuarioDAO;
 import musicddbb.utils.Connection;
@@ -47,11 +49,11 @@ public class TestUsuario {
         
 		
 		manager = Connection.connectToMysql();
-		Usuario usuario = new Usuario(1, "ciscu6@gmail.com", "Ciscu", "ciscu24.png");
+		Usuario usuario = new Usuario(1,"ciscu6@gmail.com", "Ciscu", "ciscu24.png");
 		Usuario usuario2 = new Usuario(2, "edu@gmail.com", "Edu", "Edu.png");
 		
-		Lista l1 = new Lista(1, "PlayList24", "Esta playlist es de ciscu24");
-        Lista l2 = new Lista(2, "Music24", "Esta es otra playlist de ciscu24");
+		Lista l1 = new Lista("PlayList24", "Esta playlist es de ciscu24", usuario);
+        Lista l2 = new Lista("Music24", "Esta es otra playlist de ciscu24", usuario);
         
         List<Lista> listasdelistas = new ArrayList<Lista>();
         listasdelistas.add(l1);
@@ -60,7 +62,13 @@ public class TestUsuario {
 		
         manager.getTransaction().begin();
 		manager.getTransaction().commit();
+		
 
+		//System.out.println(SuscripcionDAO.selectAllListas(1));
+		//System.out.println(SuscripcionDAO.selectAllUsuario(4));
+		
+		//SuscripcionDAO.guardarSuscripcion(2, 4);
+		//SuscripcionDAO.remove(2, 4);
 		
 		
         //list();
