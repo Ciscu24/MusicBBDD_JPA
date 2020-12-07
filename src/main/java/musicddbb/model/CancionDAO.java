@@ -48,7 +48,7 @@ public class CancionDAO extends Cancion {
 		this.id = c.id;
 		this.nombre = c.nombre;
 		this.duracion = c.duracion;
-		// this.disco_contenedor= c.disco_contenedor;
+		 this.disco_contenedor= c.disco_contenedor;
 		this.listas = c.listas;
 	}
 
@@ -92,8 +92,14 @@ public class CancionDAO extends Cancion {
 			save();
 		}
 		;
-
 	}
+	public void setDisco_Contenedor(Disco disco_contenedor) {
+		super.setDisco_contenedor(disco_contenedor);
+		if(persist) {
+			save();
+		}
+	}
+	
 
 	/**
 	 * Metodo que guarda una cancion en la base de datos

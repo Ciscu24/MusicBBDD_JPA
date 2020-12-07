@@ -1,4 +1,4 @@
-0package musicddbb.model;
+package musicddbb.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class Cancion {
         this.id = id;
         this.nombre = nombre;
         this.duracion = duracion;
-     //   this.disco_contenedor = disco_contenedor;
+        this.disco_contenedor = disco_contenedor;
         this.listas = listas;
     }
     public Cancion(int id, String nombre, int duracion) {
@@ -49,7 +49,7 @@ public class Cancion {
         this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
-      //  this.disco_contenedor = disco_contenedor;
+        this.disco_contenedor = disco_contenedor;
         this.listas = null;
     }
 
@@ -57,7 +57,7 @@ public class Cancion {
         this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
-     //   this.disco_contenedor = disco_contenedor;
+        this.disco_contenedor = disco_contenedor;
         this.listas = listas;
     }
 
@@ -137,7 +137,7 @@ public class Cancion {
         cadena+=toString();
         cadena+="\nDisco contenedor: ";
         cadena+="\n---------------------------------";
-    //    cadena+=disco_contenedor;
+        cadena+=disco_contenedor;
         cadena+="\n---------------------------------";
         return cadena;
     }
