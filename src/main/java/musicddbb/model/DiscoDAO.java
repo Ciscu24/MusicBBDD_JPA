@@ -228,7 +228,7 @@ public class DiscoDAO extends Disco {
 			}
 			
 			manager.getTransaction().commit();
-		} catch (Exceptio ex) {
+		} catch (Exception ex) {
 			System.out.println(ex);
 
 		}
