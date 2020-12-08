@@ -103,7 +103,7 @@ public class SuscripcionDAO {
     /**
     * Borra de la base de datos la subcripcion de un usuario
     *
-    * @return -1 si no se ha borrado o el id de la lista de reproduccion borrada
+ 
     */
    
    public static void remove(int id_usuario, int id_lista){

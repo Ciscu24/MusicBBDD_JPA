@@ -108,27 +108,44 @@ public class Cancion {
         return listas;
     }
 
-    public void setListas(Lista lista) {
+    public void setListas(List<Lista> listas) {
     	this.listas = listas;
-    	if(this.listas==null) {
-    		this.listas= new ArrayList<Lista>();
-    		this.listas.add(lista);
-		
-    	}
-    	if(!this.listas.contains(lista)) {
-    		this.listas.add(lista);
-    		List<Cancion> mylist = lista.getCanciones();
-    		if(mylist==null) {
-    			mylist = new ArrayList<Cancion>();
-    			mylist.add(this);
-    		}
-    		if(mylist.contains(this)) {
-    			mylist.add(this);
-    		}
-    	}
+		for(Lista l: listas) {
+			List<Cancion> canciones = l.getCanciones();
+			if(canciones==null) {
+				canciones = new ArrayList<Cancion>();
+			}
+			if(!canciones.contains(this)) {
+				canciones.add(this);
+			}
+		}
 		
     }
+    
+    
     @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cancion other = (Cancion) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
+	@Override
     public String toString() {
         return "\n------ ID: "+id+" ------\nNombre: "+nombre+"\nDuracion: "+duracion;
     }

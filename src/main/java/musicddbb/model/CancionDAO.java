@@ -86,8 +86,8 @@ public class CancionDAO extends Cancion {
 		;
 	}
 
-	public void setListas(Lista lista) {
-		super.setListas(lista);
+	public void setListas(List<Lista> listas) {
+		super.setListas(listas);
 		if (persist) {
 			save();
 		}
@@ -315,7 +315,73 @@ public class CancionDAO extends Cancion {
 
 		return result;
 	}
+	
+    /**
+    * Funcion que guarda la subcripcion en la base de datos
+    *
+    * @param id_usuario,id_lista id por lo que se filtra el select
+    */
+   public static boolean guardarCancionLista(int id_cancion, int id_lista){ 
+	   boolean resultado = false;
+	   
+       try {
+    	   
+    	   manager = Connection.connectToMysql();
+    	   manager.getTransaction().begin();
+    	   
+    	   Lista l = manager.find(Lista.class, id_lista);
+    	   Cancion c = manager.find(Cancion.class, id_cancion);
 
+    	   List<Lista> lista_canciones = c.getListas();
+    	   
+    	   if(enLista(lista_canciones, l)) {
+    		   lista_canciones.add(l);
+        	   c.setListas(lista_canciones);
+        	   resultado = true;
+    	   }
+    	   
+           
+           manager.getTransaction().commit();
+        
+       }catch (Exception ex) {
+           System.out.println(ex);
+       }
+       
+       return resultado;
+   }
+   public static boolean enLista(List<Lista> lista, Lista L) {
+	   boolean resultado = false;
+	   
+	   if(!lista.contains(L)) {
+		   resultado = true;
+	   }
+	   
+	   return resultado;
+   }
+   
+   /**
+   * Borra de la base de datos la cancion de una lista
+   *
+  
+   */
+  
+  public static void remove(int id_cancion, int id_lista){
+      try{
+   	   manager = Connection.connectToMysql();
+   	   manager.getTransaction().begin();
+   	   
+   	   Lista l = manager.find(Lista.class, id_lista);
+   	   Cancion c = manager.find(Cancion.class, id_cancion);
+
+   	   List<Lista> lista_canciones = c.getListas();
+   	   lista_canciones.remove(l);
+   	   c.setListas(lista_canciones); 
+          
+          manager.getTransaction().commit();
+      }catch (Exception ex) {
+          System.out.println(ex);
+      }
+  }
 	/**
 	 * Borra de la base de datos La cancion
 	 *

@@ -2,6 +2,7 @@ package musicddbb;
 
 import musicddbb.model.Artista;
 import musicddbb.model.Cancion;
+import musicddbb.model.CancionDAO;
 import musicddbb.model.Disco;
 import musicddbb.model.DiscoDAO;
 import musicddbb.model.Usuario;
@@ -365,7 +366,7 @@ public class AppControllerUsuario {
     }
     
     public static void menu_canciones(Usuario usuario){
-        /*
+        
         List<Lista> listasdeusuario = ListaDAO.selectAll(usuario.getId());
         for (Lista list : listasdeusuario) {
             System.out.println(list);
@@ -412,8 +413,8 @@ public class AppControllerUsuario {
                             Cancion cancionSelec = all_canciones.get(n_cancion-1);
 
                             if(!CancionEnLista(lista_seleccion, cancionSelec)){
-                                Lista_CancionDAO.guardarCancionEnLista(lista_seleccion.getId(), cancionSelec.getId());
-                                lista_seleccion.getCanciones().add(cancionSelec);
+                          
+                                CancionDAO.guardarCancionLista(cancionSelec.getId(), lista_seleccion.getId());
                                 System.out.println("Usted ha añadido la cancion con exito");
                                 Utils.pulsarEnter();
                             }else{
@@ -438,8 +439,8 @@ public class AppControllerUsuario {
                             Utils.pulsarEnter();
                         }else if(n_cancionBorrar!=0 && n_cancionBorrar>0 && n_cancionBorrar<=lista_seleccion.getCanciones().size()){
                             Cancion cancionBorrar = lista_seleccion.getCanciones().get(n_cancionBorrar-1);
-                            Lista_CancionDAO.remove(lista_seleccion.getId(), cancionBorrar.getId());
-                            lista_seleccion.getCanciones().remove(cancionBorrar);
+                            CancionDAO.remove(cancionBorrar.getId(), lista_seleccion.getId());
+                  
                             System.out.println("La cancion ha sido borrada con exito");
                             Utils.pulsarEnter();
                         }
@@ -450,7 +451,7 @@ public class AppControllerUsuario {
             System.out.println("Usted ha introducido un numero incorrecto");
             Utils.pulsarEnter();
         }
-        */
+        
     }
     
     public static boolean CancionEnLista(Lista lista, Cancion cancion){

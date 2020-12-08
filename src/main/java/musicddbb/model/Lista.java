@@ -167,6 +167,9 @@ public class Lista {
 			}
 		}
     }
+    
+    
+    
 
     @Override
     public String toString() {

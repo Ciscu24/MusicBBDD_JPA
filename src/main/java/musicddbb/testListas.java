@@ -7,6 +7,7 @@ import javax.persistence.Persistence;
 import java.util.List;
 import musicddbb.model.Cancion;
 import musicddbb.model.Lista;
+import musicddbb.model.ListaDAO;
 
 public class testListas {
 	
@@ -29,9 +30,9 @@ public class testListas {
         l1.setCanciones(cancion2);
    */
         
-        manager.getTransaction().begin();
+     //   manager.getTransaction().begin();
    //     manager.persist(l1);
-        manager.getTransaction().commit();
+    //    manager.getTransaction().commit();
         
        /* manager.getTransaction().begin();
         Lista aux = manager.find(Lista.class, 1);
@@ -45,6 +46,10 @@ public class testListas {
 	
 	
 	
-*/	}
+*/	Lista L1 = new Lista("prueba","prueba");
+        ListaDAO L = new ListaDAO(L1);
+        
+       
+	}
 
 }
