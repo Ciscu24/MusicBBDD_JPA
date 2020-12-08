@@ -133,22 +133,17 @@ public class Lista {
         return canciones;
     }
     
-    public void setCanciones(Cancion c) {
-    	if(this.canciones==null) {
-    		this.canciones= new ArrayList<Cancion>();
-    		this.canciones.add(c);
-    	}
-    	if(!this.canciones.contains(c)) {
-    		this.canciones.add(c);
-    		List<Lista> mylist = c.getListas();
-    		if(mylist==null) {
-    			mylist = new ArrayList<Lista>();
-    			mylist.add(this);
-    		}
-    		if(mylist.contains(this)) {
-    			mylist.add(this);
-    		}
-    	}
+    public void setCanciones(List<Cancion> canciones) {
+    	this.canciones = canciones;
+		for(Cancion c: canciones) {
+			List<Lista> listas = c.getListas();
+			if(listas==null) {
+				listas = new ArrayList<Lista>();
+			}
+			if(!listas.contains(this)) {
+				listas.add(this);
+			}
+		}
     }
 
     public List<Usuario> getUsuarios_suscritos() {

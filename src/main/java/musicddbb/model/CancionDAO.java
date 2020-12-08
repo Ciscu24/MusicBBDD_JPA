@@ -367,17 +367,17 @@ public class CancionDAO extends Cancion {
   
   public static void remove(int id_cancion, int id_lista){
       try{
-   	   manager = Connection.connectToMysql();
-   	   manager.getTransaction().begin();
-   	   
-   	   Lista l = manager.find(Lista.class, id_lista);
-   	   Cancion c = manager.find(Cancion.class, id_cancion);
-
-   	   List<Lista> lista_canciones = c.getListas();
-   	   lista_canciones.remove(l);
-   	   c.setListas(lista_canciones); 
-          
-          manager.getTransaction().commit();
+	   	   manager = Connection.connectToMysql();
+	   	   manager.getTransaction().begin();
+	   	   
+	   	   Lista l = manager.find(Lista.class, id_lista);
+	   	   Cancion c = manager.find(Cancion.class, id_cancion);
+	
+	   	   List<Cancion> lista_canciones = l.getCanciones();
+	   	   lista_canciones.remove(c);
+	   	   l.setCanciones(lista_canciones);
+	      
+	   	   manager.getTransaction().commit();
       }catch (Exception ex) {
           System.out.println(ex);
       }

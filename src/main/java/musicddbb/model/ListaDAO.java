@@ -113,7 +113,7 @@ public class ListaDAO extends Lista {
 		}
 	}
 
-	public void setCanciones(Cancion c) {
+	public void setCanciones(List<Cancion> c) {
 		super.setCanciones(c);
 		if (persist) {
 			save();

@@ -439,6 +439,8 @@ public class AppControllerUsuario {
                             Utils.pulsarEnter();
                         }else if(n_cancionBorrar!=0 && n_cancionBorrar>0 && n_cancionBorrar<=lista_seleccion.getCanciones().size()){
                             Cancion cancionBorrar = lista_seleccion.getCanciones().get(n_cancionBorrar-1);
+                            System.out.println(cancionBorrar);
+                            System.out.println(lista_seleccion);
                             CancionDAO.remove(cancionBorrar.getId(), lista_seleccion.getId());
                   
                             System.out.println("La cancion ha sido borrada con exito");
