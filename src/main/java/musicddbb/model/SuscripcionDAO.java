@@ -124,6 +124,12 @@ public class SuscripcionDAO {
        }
    }
    
+   /**
+    * Funcion para saber si una lista esta en un array de listas
+    * @param lista, el array de la lista al que queremos añadir la lista
+    * @param listaAnadir, la lista que queremos añadir al array
+    * @return
+    */
    public static boolean enLista(List<Lista> lista, Lista listaAnadir) {
 	   boolean resultado = false;
 	   

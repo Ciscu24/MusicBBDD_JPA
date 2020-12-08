@@ -53,8 +53,8 @@ public class TestUsuario {
 		manager.getTransaction().commit();*/
         
 		
-		//manager = Connection.connectToMysql();
-		/*
+		manager = Connection.connectToH2();
+		
 		Usuario usuario = new Usuario("ciscu6@gmail.com", "Ciscu", "ciscu24.png");
 		Usuario usuario2 = new Usuario("edu@gmail.com", "Edu", "Edu.png");
 		
@@ -69,10 +69,16 @@ public class TestUsuario {
         manager.getTransaction().begin();
 		manager.getTransaction().commit();
 		
+		UsuarioDAO u = new UsuarioDAO(usuario);
+		//u.saveH2();
+		
+		System.out.println(UsuarioDAO.selectAllH2(""));
+		/*
+		
 	    UsuarioDAO u1=new UsuarioDAO(usuario2);
 	    u1.save();
-	    */
-	    Disco disco=new Disco("Colores","Colores.png",Date.valueOf("2020-10-20"));
+	    
+	   Disco disco=new Disco("Colores","Colores.png",Date.valueOf("2020-10-20"));
 	    Disco disco1=new Disco("Prueba", "prueba.png", Date.valueOf("2020-10-20"));	    
 	    DiscoDAO d1=new DiscoDAO(disco1); 
 	    
@@ -83,7 +89,7 @@ public class TestUsuario {
 	    
 	    Cancion c1=new Cancion("Cancion con Yandel", 180,new Disco(6));
 	    CancionDAO c=new CancionDAO(c1);
-	    c.save();
+	    c.save();*/
 	    
 	    //System.out.println(UsuarioDAO.selectAllForID(1));
 	    //d1.save();

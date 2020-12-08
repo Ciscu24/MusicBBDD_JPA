@@ -95,8 +95,7 @@ public class UsuarioDAO extends Usuario {
 	/**
 	 * Metodo que guarda un usuario en la base de datos
 	 *
-	 * @return -1 en caso de que no haga nada o el id del usuario que hayamos
-	 *         agregado o editado
+	 * @return 0 en caso de que no haga nada o 1 si se ha agregado o editado
 	 */
 	public int save() {
 		int result = 0;
@@ -135,7 +134,7 @@ public class UsuarioDAO extends Usuario {
 	/**
 	 * Metodo que Lista todos los usuarios de la base de datos
 	 *
-	 * @return Todas loss usuarios
+	 * @return Todas los usuarios
 	 */
 	public static List<Usuario> selectAll() {
 		return selectAll("");
@@ -179,10 +178,10 @@ public class UsuarioDAO extends Usuario {
 	}
 
 	/**
-	 * Funcion que selecciona por id todos los usuarios de la base de datos
+	 * Funcion que devuelve un usuario pasando el id en cuestion
 	 *
-	 * @param id id por lo que se filtra el select
-	 * @return devuelve una lista de usuarios
+	 * @param id por lo que se filtra el select
+	 * @return devuelve un usuario
 	 */
 	public static Usuario selectAllForID(int id) {
 		Usuario result = null;
@@ -209,11 +208,10 @@ public class UsuarioDAO extends Usuario {
 	}
 
 	/**
-	 * Funcion que selecciona por nombre todos los usuarios de la base de datos que
-	 * sea por el pattern
+	 * Funcion que devuelve un usuario pasando el nombre de el
 	 * 
 	 * @param pattern Palabra por lo que se filtra el select
-	 * @return devuelve una lista de usuarios
+	 * @return devuelve un usuario
 	 */
 	public static Usuario selectAllForNombre(String nombre) {
 		Usuario result = null;
@@ -241,7 +239,7 @@ public class UsuarioDAO extends Usuario {
 	/**
 	 * Borra de la base de datos el usuario
 	 *
-	 * @return -1 si no se ha borrado o el id del usuario borrado
+	 * @return false si no se ha borrado o true si se ha borrado correctamente
 	 */
 	public boolean remove() {
 		boolean result = false;
@@ -262,6 +260,112 @@ public class UsuarioDAO extends Usuario {
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Metodo que guarda un usuario en la base de datos de H2
+	 *
+	 * @return 0 en caso de que no haga nada o 1 si se ha agregado o editado
+	 */
+	public int saveH2() {
+		int result = 0;
+
+		try {
+			manager = Connection.connectToH2();
+
+			if (this.id > 0) {
+				//UPDATE
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("UPDATE Usuario SET correo = ?, nombre = ?, foto = ? WHERE id = ?")
+		        .setParameter(1, this.correo)
+		        .setParameter(2, this.nombre)
+		        .setParameter(3, this.foto)
+		        .setParameter(4, this.id)
+		        .executeUpdate();
+				manager.getTransaction().commit();
+			} else {
+				// INSERT
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("INSERT INTO Usuario (correo,nombre,foto) VALUES (?,?,?)")
+		        .setParameter(1, this.correo)
+		        .setParameter(2, this.nombre)
+		        .setParameter(3, this.foto)
+		        .executeUpdate();
+				manager.getTransaction().commit();
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Borra de la base de datos H2 el usuario 
+	 *
+	 * @return false si no se ha borrado o true si se ha borrado correctamente
+	 */
+	public boolean removeH2() {
+		boolean result = false;
+
+		if (this.id > 0) {
+
+			try {
+				
+				manager = Connection.connectToH2();
+				manager.getTransaction().begin();
+				
+				if(manager.createQuery("DELETE FROM Usuario WHERE id = " + this.id).executeUpdate() == 1) {
+					result = true;
+				}
+				
+				manager.getTransaction().commit();
+
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
+		}
+
+		return result;
+	}
+	
+	
+	/**
+	 * Funcion que selecciona por nombre todos los usuarios de la base de datos H2 que
+	 * sea por el pattern
+	 *
+	 * @param pattern Palabra por lo que se filtra el select
+	 * @return devuelve una lista de usuarios
+	 */
+	public static List<Usuario> selectAllH2(String pattern) {
+		List<Usuario> result = new ArrayList();
+
+		try {
+			manager = Connection.connectToH2();
+			manager.getTransaction().begin();
+			
+			String q = "FROM Usuario";
+
+			if (pattern.length() > 0) {
+				q += " WHERE nombre LIKE ?";
+			}
+			
+
+			if (pattern.length() > 0) {
+				result = manager.createQuery("FROM Usuario WHERE nombre LIKE '"+ pattern +"%'")
+						.getResultList();
+			}else {
+				result = manager.createQuery("FROM Usuario").getResultList();
+			}
+
+			
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
+			System.out.println(ex);
 		}
 
 		return result;

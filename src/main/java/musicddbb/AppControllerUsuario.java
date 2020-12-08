@@ -3,15 +3,19 @@ package musicddbb;
 import musicddbb.model.Artista;
 import musicddbb.model.Cancion;
 import musicddbb.model.Disco;
+import musicddbb.model.DiscoDAO;
 import musicddbb.model.Usuario;
+import musicddbb.model.UsuarioDAO;
 import musicddbb.model.Lista;
+import musicddbb.model.ListaDAO;
+import musicddbb.model.SuscripcionDAO;
+import musicddbb.utils.Connection;
 import musicddbb.utils.Utils;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 
 public class AppControllerUsuario {
-    /*
     public static Usuario usuario = null;
 
     public static void ejecutar() {
@@ -52,7 +56,7 @@ public class AppControllerUsuario {
                 break;
                 
             case 0:
-                ConnectionUtil.closeConnection();
+                Connection.closeConnection();
                 break;
 
         }
@@ -104,7 +108,8 @@ public class AppControllerUsuario {
         if (nombre.equals("") || correo.equals("") || foto.equals("")) {
             System.out.println("No se ha podido realizar el registro");
         } else {
-            UsuarioDAO usuario = new UsuarioDAO(correo, nombre, foto);
+        	Usuario usuarioCreacion = new Usuario(correo, nombre, foto);
+            UsuarioDAO usuario = new UsuarioDAO(usuarioCreacion);
             usuario.save();
             System.out.println("Usuario creado");
         }
@@ -115,7 +120,7 @@ public class AppControllerUsuario {
         int opcion = 0;
         do {
             System.out.println("\n+----------------------------+");
-            System.out.println("|    Menu Usuario            |");
+            System.out.println("|       Menu Usuario         |");
             System.out.println("+----------------------------+");
             System.out.println("| 1) Listar Discos           |");
             System.out.println("| 2) Lista de Reproduccion   |");
@@ -161,6 +166,7 @@ public class AppControllerUsuario {
 
             switch (opcion) {
                 case 1:
+                	/*
                     String patternn = Utils.devolverString("Introduce el nombre del autor: ");
 
                     List<Artista> artista = ArtistaDAO.selectAll(patternn);
@@ -196,7 +202,7 @@ public class AppControllerUsuario {
                         Utils.pulsarEnter();
                     }
 
-                    
+                    */
                     break;
 
                 case 2:
@@ -262,7 +268,7 @@ public class AppControllerUsuario {
         int opcion = 0;
         do {
             System.out.println("\n+------------------------------+");
-            System.out.println("|    Menu Lista reproduccion   |");
+            System.out.println("|    Menu Lista Reproduccion   |");
             System.out.println("+------------------------------+");
             System.out.println("| 1) Crear Lista               |");
             System.out.println("| 2) Editar Lista              |");
@@ -292,7 +298,7 @@ public class AppControllerUsuario {
                     }
 
                     int idLista = Utils.devolverInt("Introduzca el id de la lista que desea cambiar: ");
-                    Lista lst = ListaDAO.selectAllForId(idLista);
+                    Lista lst = ListaDAO.selectAllForID(idLista);
 
                     if (lst.getId() != -1) {
                         int opcion1 = 0;
@@ -340,9 +346,9 @@ public class AppControllerUsuario {
 
                     int idListaEliminado = Utils.devolverInt("Introduzca el id de la lista que desea eliminar: ");
 
-                    ListaDAO listaElminado = new ListaDAO(ListaDAO.selectAllForId(idListaEliminado));
+                    ListaDAO listaElminado = new ListaDAO(ListaDAO.selectAllForID(idListaEliminado));
 
-                    if (listaElminado.getId() != -1 && listaElminado.remove() != -1) {
+                    if (listaElminado.remove()) {
                         System.out.println("La lista se ha sido borrado con exito");
                         Utils.pulsarEnter();
                     } else {
@@ -359,7 +365,7 @@ public class AppControllerUsuario {
     }
     
     public static void menu_canciones(Usuario usuario){
-        
+        /*
         List<Lista> listasdeusuario = ListaDAO.selectAll(usuario.getId());
         for (Lista list : listasdeusuario) {
             System.out.println(list);
@@ -367,7 +373,7 @@ public class AppControllerUsuario {
         
         int id_lista = Utils.devolverInt("Introduzca el id de la lista que quiere editar: ");
         
-        Lista lista_seleccion = ListaDAO.selectAllForId(id_lista);
+        Lista lista_seleccion = ListaDAO.selectAllForID(id_lista);
         
         if(lista_seleccion.getId() != -1){
             int opcion = 0;
@@ -444,7 +450,7 @@ public class AppControllerUsuario {
             System.out.println("Usted ha introducido un numero incorrecto");
             Utils.pulsarEnter();
         }
-        
+        */
     }
     
     public static boolean CancionEnLista(Lista lista, Cancion cancion){
@@ -494,7 +500,7 @@ public class AppControllerUsuario {
                         
                         if(!UsuarioEnLista(listaSelec.getUsuarios_suscritos(), usuario)){
                             SuscripcionDAO.guardarSuscripcion(usuario.getId(), listaSelec.getId());
-                            usuario.getListas_suscrito().add(listaSelec);
+                            //usuario.getListas_suscrito().add(listaSelec);
                             System.out.println("Usted se ha suscrito con exito");
                             Utils.pulsarEnter();
                         }else{
@@ -542,6 +548,5 @@ public class AppControllerUsuario {
         }
         return aux;
     }
-    */
 
 }

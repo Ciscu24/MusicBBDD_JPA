@@ -265,11 +265,29 @@ public class ListaDAO extends Lista {
 
 		return result;
 	}
+	
+	
+	public static List<Lista> selectAll(int id_usuario) {
+		List<Lista> result = new ArrayList();
+
+		try {
+			manager = Connection.connectToMysql();
+			manager.getTransaction().begin();
+
+			result = manager.createQuery("FROM Lista WHERE id_usuario =" + id_usuario).getResultList();
+
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
 
 	/**
 	 * Borra de la base de datos la lista
 	 *
-	 * @return -1 si no se ha borrado o el id de la lista borrada
+	 * @return false si no se ha borrado o true si se ha borrado correctamente
 	 */
 	public boolean remove() {
 		boolean result = false;
@@ -290,6 +308,99 @@ public class ListaDAO extends Lista {
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
+		}
+
+		return result;
+	}
+	
+	
+	/**
+	 * Metodo que guarda una lista en la base de datos H2
+	 *
+	 * @return -1 en caso de que no haga nada o el id de la lista que hayamos
+	 *         agregado o editado
+	 */
+	public int saveH2() {
+		int result = 0;
+
+		try {
+			manager = Connection.connectToH2();
+
+			if (this.id > 0) {
+				// UPDATE
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("UPDATE Lista SET nombre = ?, descripcion = ?, id_usuario = ? WHERE id = ?")
+						.setParameter(1, this.nombre).setParameter(2, this.descripcion).setParameter(3, this.creador.id).setParameter(4, this.id)
+						.executeUpdate();
+				manager.getTransaction().commit();
+			} else {
+				// INSERT
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("INSERT INTO Lista (id,nombre,descripcion, id_usuario) VALUES (?,?,?,?)")
+						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.descripcion).setParameter(4, this.creador.id)
+						.executeUpdate();
+				manager.getTransaction().commit();
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
+	
+	
+	/**
+	 * Borra de la base de datos H2 la lista
+	 *
+	 * @return false si no se ha borrado o true si se ha borrado correctamente
+	 */
+	public boolean removeH2() {
+		boolean result = false;
+
+		if (this.id > 0) {
+
+			try {
+
+				manager = Connection.connectToH2();
+				manager.getTransaction().begin();
+
+				if (manager.createQuery("DELETE FROM Lista WHERE id = " + this.id).executeUpdate() == 1) {
+					result = true;
+				}
+
+				manager.getTransaction().commit();
+
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
+		}
+
+		return result;
+	}
+	
+	public static List<Lista> selectAllH2(String pattern) {
+		List<Lista> result = new ArrayList();
+
+		try {
+			manager = Connection.connectToH2();
+			manager.getTransaction().begin();
+
+			String q = "FROM Lista";
+
+			if (pattern.length() > 0) {
+				q += " WHERE nombre LIKE ?";
+			}
+
+			if (pattern.length() > 0) {
+				result = manager.createQuery("FROM Lista WHERE nombre LIKE '" + pattern + "%'").getResultList();
+			} else {
+				result = manager.createQuery("FROM Lista").getResultList();
+			}
+
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
+			System.out.println(ex);
 		}
 
 		return result;
