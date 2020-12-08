@@ -2,13 +2,15 @@ package musicddbb;
 
 import musicddbb.model.Artista;
 import musicddbb.model.Cancion;
+import musicddbb.model.CancionDAO;
 import musicddbb.model.Disco;
+import musicddbb.model.DiscoDAO;
 import musicddbb.utils.Utils;
 import java.sql.Date;
 import java.util.List;
 
 public class AppControllerAdmin {
-	/*
+	
 
 	public static void lista_sesionAdmin() {
 		int opcion = 0;
@@ -41,7 +43,9 @@ public class AppControllerAdmin {
 
 	}
 
+	
 	public static void Menu_Artistas() {
+		/*
 		int opcion = 0;
 		do {
 			System.out.println("\n+--------------------+");
@@ -145,6 +149,7 @@ public class AppControllerAdmin {
 				break;
 			}
 		} while (opcion != 0);
+		*/
 	}
 
 	public static void Menu_Discos() {
@@ -166,10 +171,13 @@ public class AppControllerAdmin {
 			case 1:
 				String nombre = Utils.devolverString("Introduzca el nombre del disco: ");
 				String foto = Utils.devolverString("Introduzca la foto del disco: ");
+				/*
 				String nombre_artista = Utils.devolverString(
 						"Introduzca el nombre completo del artista que ha producido el disco: ");
+				*/
 				String fecha_pro = Utils.devolverString(
 						"Introduzca la fecha de produccion del disco (Ejemplo: 2020-10-20): ");
+				/*
 				Artista artista_disco = ArtistaDAO.selectAllForNombre(nombre_artista);
 				if (artista_disco != null) {
 					Disco d = new Disco(nombre, foto, artista_disco, Date.valueOf(fecha_pro), null);
@@ -180,43 +188,53 @@ public class AppControllerAdmin {
 						System.out.println("No se ha podido crear el artista");
 					}
 				}
+				*/
+				
+				Disco d = new Disco(nombre, foto, Date.valueOf(fecha_pro), null);
+				DiscoDAO dDAO = new DiscoDAO(d);
+				if (dDAO.save() == 1) {
+					System.out.println("El Disco se ha creado con exito");
+				} else {
+					System.out.println("No se ha podido crear el Disco");
+				}
 				break;
 
 			case 2:
 				List<Disco> discos = DiscoDAO.selectAll();
-				for (Disco d : discos) {
-					System.out.println(d);
+				for (Disco d1 : discos) {
+					System.out.println(d1);
 				}
 				int idDisco = Utils.devolverInt("Introduzca el id del disco que desea cambiar: ");
-				Disco d = DiscoDAO.selectAllForId(idDisco);
+				Disco d1 = DiscoDAO.selectAllForID(idDisco);
 
-				if (d != null) {
+				if (d1 != null) {
 					int opcion1 = 0;
 					do {
 						System.out.println("\n+--------------------------------+");
-						System.out.println("|   Disco: " + d.getId() + "                  |");
+						System.out.println("|   Disco: " + d1.getId() + "                  |");
 						System.out.println("+--------------------------------+");
-						System.out.println(" 1) Editar nombre: " + d.getNombre());
-						System.out.println(" 2) Editar foto: " + d.getFoto());
-						System.out.println(" 3) Editar fecha de produccion: " + d.getFecha_produccion());
-						System.out.println(" 4) Editar creador: " + d.getCreador().getNombre());
-						System.out.println(" 0) Guardar artista");
+						System.out.println(" 1) Editar nombre: " + d1.getNombre());
+						System.out.println(" 2) Editar foto: " + d1.getFoto());
+						System.out.println(" 3) Editar fecha de produccion: " + d1.getFecha_produccion());
+						//System.out.println(" 4) Editar creador: " + d1.getCreador().getNombre());
+						System.out.println(" 0) Guardar disco");
 
 						opcion1 = Utils.devolverInt("Introduce una opcion: ");
 
 						switch (opcion1) {
 						case 1:
 							String nombreCambio = Utils.devolverString("Introduce el nuevo nombre: ");
-							d.setNombre(nombreCambio);
+							d1.setNombre(nombreCambio);
 							break;
 						case 2:
 							String fotoCambio = Utils.devolverString("Introduce la nueva foto: ");
-							d.setFoto(fotoCambio);
+							d1.setFoto(fotoCambio);
 							break;
 						case 3:
 							String fechaCambio = Utils.devolverString("Introduce la nueva fecha de produccion: ");
-							d.setFecha_produccion(Date.valueOf(fechaCambio));
+							d1.setFecha_produccion(Date.valueOf(fechaCambio));
 							break;
+							/*
 						case 4:
 							String nombreCreadorCambio = Utils.devolverString("Introduce el nuevo nombre del creador: ");
 							Artista artistacambio = ArtistaDAO.selectAllForNombre(nombreCreadorCambio);
@@ -226,9 +244,10 @@ public class AppControllerAdmin {
 								System.out.println("No se ha encontrado el artista");
 							}
 							break;
+							*/
 						case 0:
-							DiscoDAO discoDAO = new DiscoDAO(d);
-							if (discoDAO.save() != -1) {
+							DiscoDAO discoDAO = new DiscoDAO(d1);
+							if (discoDAO.save() == 1) {
 								System.out.println("Disco guardado con exito");
 							} else {
 								System.out.println("El disco no se ha guardado");
@@ -250,9 +269,9 @@ public class AppControllerAdmin {
 				}
 				int idDiscoEliminado = Utils.devolverInt("Introduzca el id del disco que desea eliminar: ");
 
-				DiscoDAO discoEliminado = new DiscoDAO(DiscoDAO.selectAllForId(idDiscoEliminado));
+				DiscoDAO discoEliminado = new DiscoDAO(DiscoDAO.selectAllForID(idDiscoEliminado));
 
-				if (discoEliminado.getId() != -1 && discoEliminado.remove() != -1) {
+				if (discoEliminado.remove() ) {
 					System.out.println("El disco ha sido borrado con exito");
 				} else {
 					System.out.println("El disco no se ha borrado");
@@ -266,7 +285,6 @@ public class AppControllerAdmin {
 					System.out.println(ds);
 				}
 				break;
-
 			}
 		} while (opcion != 0);
 	}
@@ -291,11 +309,11 @@ public class AppControllerAdmin {
                     String nombre = Utils.devolverString("Introduzca el nombre de la cancion: ");
                     int duracion = Utils.devolverInt("Introduzca la duracion de la cancion: ");
                     String nombre_disco = Utils.devolverString("Introduzca el nombre del disco: ");
-                    Disco cancion_disco = DiscoDAO.selectAllForNombre(nombre_disco);
+                    Disco cancion_disco = DiscoDAO.selectAllforNombre(nombre_disco);
                     if (cancion_disco != null) {
                         Cancion c = new Cancion(nombre, duracion, cancion_disco);
                         CancionDAO cDAO = new CancionDAO(c);
-                        if (cDAO.save() != -1) {
+                        if (cDAO.save() == 1) {
                             System.out.println("La cancion se ha creado con exito");
                         } else {
                             System.out.println("No se ha podido crear el artista");
@@ -309,13 +327,13 @@ public class AppControllerAdmin {
                         System.out.println(d);
                     }
                     int idcancion = Utils.devolverInt("Introduzca el id de la cancion que desea cambiar: ");
-                    Cancion c = CancionDAO.selectAllForId(idcancion);
+                    Cancion c = CancionDAO.selectAllForID(idcancion);
 
                     if (c != null) {
                         int opcion1 = 0;
                         do {
                             System.out.println("\n+--------------------------------+");
-                            System.out.println("|   Disco: " + c.getId() + "                  |");
+                            System.out.println("|   Cancion: " + c.getId() + "                  |");
                             System.out.println("+--------------------------------+");
                             System.out.println(" 1) Editar nombre: " + c.getNombre());
                             System.out.println(" 2) Editar duracion: " + c.getDuracion());
@@ -335,7 +353,7 @@ public class AppControllerAdmin {
                                     break;
                                 case 3:
                                     String NombreDiscoCambio = Utils.devolverString("Introduce el nuevo nombre del disco: ");
-                                    Disco Discocambio = DiscoDAO.selectAllForNombre(NombreDiscoCambio);
+                                    Disco Discocambio = DiscoDAO.selectAllforNombre(NombreDiscoCambio);
                                     if (Discocambio != null) {
                                         c.setDisco_contenedor(Discocambio);
                                     } else {
@@ -344,7 +362,7 @@ public class AppControllerAdmin {
                                     break;
                                 case 0:
                                     CancionDAO cancionDAO = new CancionDAO(c);
-                                    if (cancionDAO.save() != -1) {
+                                    if (cancionDAO.save() == 1) {
                                         System.out.println("Cancion guardado con exito");
                                     } else {
                                         System.out.println("La cancion no se ha guardado");
@@ -366,12 +384,12 @@ public class AppControllerAdmin {
                     }
                     int idCancionEliminado = Utils.devolverInt("Introduzca el id de la cancion que desea eliminar: ");
 
-                    CancionDAO cancionEliminado = new CancionDAO(CancionDAO.selectAllForId(idCancionEliminado));
+                    CancionDAO cancionEliminado = new CancionDAO(CancionDAO.selectAllForID(idCancionEliminado));
 
-                    if (cancionEliminado.getId() != -1 && cancionEliminado.remove() != -1) {
-                        System.out.println("El disco ha sido borrado con exito");
+                    if (cancionEliminado.remove()) {
+                        System.out.println("La canción ha sido borrado con exito");
                     } else {
-                        System.out.println("El disco no se ha borrado");
+                        System.out.println("La canción no se ha borrado");
                     }
                     break;
 
@@ -385,5 +403,5 @@ public class AppControllerAdmin {
         } while (opcion != 0);
 
     }
-    */
+    
 }

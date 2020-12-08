@@ -7,14 +7,17 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "lista")
+@Table(name = "disco")
 public class Disco {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	protected int id;
 	@Column(name = "nombre")
@@ -23,7 +26,7 @@ public class Disco {
     protected String foto;
 	
 	
-    protected Artista creador;
+    //protected Artista creador;
 	
     @Column(name = "fecha_produccion")
     protected Date fecha_produccion;
@@ -35,31 +38,46 @@ public class Disco {
         this.id = id;
         this.nombre = "";
         this.foto = "";
-        this.creador = null;
+       // this.creador = null;
         this.fecha_produccion = null;
         this.canciones = null;
     }
 
     public Disco() {
-        this(-1, "", "", null, null, null);
+        this( "", "", null, null);
     }
     
-    public Disco(String nombre, String foto, Artista creador, Date fecha_produccion, List<Cancion> canciones) {
-        this.id = -1;
+    public Disco(String nombre, String foto, Date fecha_produccion, List<Cancion> canciones) {
+        
         this.nombre = nombre;
         this.foto = foto;
-        this.creador = creador;
+       // this.creador = creador;
         this.fecha_produccion = fecha_produccion;
         this.canciones = canciones;
     }
 
-    public Disco(int id, String nombre, String foto, Artista creador, Date fecha_produccion, List<Cancion> canciones) {
+    public Disco(int id, String nombre, String foto, Date fecha_produccion, List<Cancion> canciones) {
         this.id = id;
         this.nombre = nombre;
         this.foto = foto;
-        this.creador = creador;
+       // this.creador = creador;
         this.fecha_produccion = fecha_produccion;
         this.canciones = canciones;
+    }
+    
+    public Disco( String nombre, String foto, Date fecha_produccion) {
+        this.nombre = nombre;
+        this.foto = foto;
+       // this.creador = creador;
+        this.fecha_produccion = fecha_produccion;
+    }
+    
+    public Disco(int id, String nombre, String foto, Date fecha_produccion) {
+    	this.id=id;
+        this.nombre = nombre;
+        this.foto = foto;
+       // this.creador = creador;
+        this.fecha_produccion = fecha_produccion;
     }
 
     public int getId() {
@@ -94,16 +112,21 @@ public class Disco {
         this.fecha_produccion = fecha_produccion;
     }
     
+    /**
     public Artista getCreador() {
         if(creador.nombre.equals("") || creador.foto.equals("") || creador.nacionalidad.equals("")){
            //creador = ArtistaDAO.selectAllForId(creador.id);
         }
         return creador;
     }
-
+    */
+    
+    
+/*
     public void setCreador(Artista creador) {
         this.creador = creador;
     }
+    */
 
     public List<Cancion> getCanciones() {
         return canciones;
@@ -113,7 +136,6 @@ public class Disco {
         this.canciones = canciones;
         for(Cancion c:this.canciones) {
         	c.setDisco_contenedor(this);
-        	
         }
     }
     
@@ -138,7 +160,7 @@ public class Disco {
                 
         return cadena;
     }
-    
+   /*
     public String toStringWithCreador(){
         String cadena = "";
         cadena+=toString();
@@ -148,6 +170,7 @@ public class Disco {
         cadena+="\n---------------------------------";
         return cadena;
     }
+    */
 
 	@Override
 	public int hashCode() {

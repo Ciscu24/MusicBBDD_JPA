@@ -99,7 +99,7 @@ public class UsuarioDAO extends Usuario {
 	 *         agregado o editado
 	 */
 	public int save() {
-		int result = -1;
+		int result = 0;
 
 		try {
 			manager = Connection.connectToMysql();
@@ -107,7 +107,7 @@ public class UsuarioDAO extends Usuario {
 			if (this.id > 0) {
 				//UPDATE
 				manager.getTransaction().begin();
-				manager.createNativeQuery("UPDATE Usuario SET correo = ?, nombre = ?, foto = ? WHERE id = ?")
+				result=manager.createNativeQuery("UPDATE Usuario SET correo = ?, nombre = ?, foto = ? WHERE id = ?")
 		        .setParameter(1, this.correo)
 		        .setParameter(2, this.nombre)
 		        .setParameter(3, this.foto)
@@ -117,11 +117,10 @@ public class UsuarioDAO extends Usuario {
 			} else {
 				// INSERT
 				manager.getTransaction().begin();
-				manager.createNativeQuery("INSERT INTO Usuario (id,correo,nombre,foto) VALUES (?,?,?,?)")
-		        .setParameter(1, this.id)
-		        .setParameter(2, this.correo)
-		        .setParameter(3, this.nombre)
-		        .setParameter(4, this.foto)
+				result=manager.createNativeQuery("INSERT INTO Usuario (correo,nombre,foto) VALUES (?,?,?)")
+		        .setParameter(1, this.correo)
+		        .setParameter(2, this.nombre)
+		        .setParameter(3, this.foto)
 		        .executeUpdate();
 				manager.getTransaction().commit();
 			}

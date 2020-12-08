@@ -22,14 +22,14 @@ public class DiscoDAO extends Disco {
 		persist = false;
 	}
 
-	private DiscoDAO(String nombre, String foto, Artista creador, Date fecha_produccion, List<Cancion> canciones) {
-		super(nombre, foto, creador, fecha_produccion, canciones);
+	private DiscoDAO(String nombre, String foto,  Date fecha_produccion, List<Cancion> canciones) {
+		super(nombre, foto, fecha_produccion, canciones);
 		persist = false;
 	}
 
-	private DiscoDAO(int id, String nombre, String foto, Artista creador, Date fecha_produccion,
+	private DiscoDAO(int id, String nombre, String foto, Date fecha_produccion,
 			List<Cancion> canciones) {
-		super(id, nombre, foto, creador, fecha_produccion, canciones);
+		super(id, nombre, foto, fecha_produccion, canciones);
 		persist = false;
 
 	}
@@ -41,7 +41,8 @@ public class DiscoDAO extends Disco {
 	public DiscoDAO(Disco d) {
 		this.id = d.id;
 		this.nombre = d.nombre;
-		this.creador = d.creador;
+		this.foto=d.foto;
+		//this.creador = d.creador;
 		this.fecha_produccion = d.fecha_produccion;
 		this.canciones = d.canciones;
 	}
@@ -99,31 +100,38 @@ public class DiscoDAO extends Disco {
 	}
 
 	/**
-	 * Metodo que guarda una cancion en la base de datos
+	 * Metodo que guarda un Disco en la base de datos
 	 *
-	 * @return -1 en caso de que no haga nada o el id de la cancion que hayamos
+	 * @return -1 en caso de que no haga nada o el id del Disco que hayamos
 	 *         agregado o editado
 	 */
-
 	public int save() {
-		int result = -1;
+		int result = 0;
 
 		try {
 			manager = Connection.connectToMysql();
 
 			if (this.id > 0) {
-				// UPDATE
+				//UPDATE
 				manager.getTransaction().begin();
-				manager.createNativeQuery("UPDATE Cancion SET nombre = ?, duracion = ?, WHERE id = ?")
-						.setParameter(1, this.nombre).setParameter(2, this.duracion).setParameter(3, this.id)
-						.executeUpdate();
+				result=manager.createNativeQuery("UPDATE Disco SET nombre = ?, foto = ? , fecha_produccion=? WHERE id = ?")
+		        .setParameter(1, this.nombre)
+		        .setParameter(2, this.foto)
+		       // .setParameter(3, this.creador)
+		        .setParameter(3, this.fecha_produccion)
+		        .setParameter(4, this.id)
+		        .executeUpdate();
+				
 				manager.getTransaction().commit();
 			} else {
 				// INSERT
 				manager.getTransaction().begin();
-				manager.createNativeQuery("INSERT INTO Cancion (id,nombre,duracion) VALUES (?,?,?)")
-						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.duracion)
-						.executeUpdate();
+				result=manager.createNativeQuery("INSERT INTO Disco (nombre,foto,fecha_produccion) VALUES(?,?,?)")
+		        .setParameter(1, this.nombre)
+		        .setParameter(2, this.foto)
+		      //.setParameter(3, this.creador)
+		        .setParameter(3, this.fecha_produccion)
+		        .executeUpdate();
 				manager.getTransaction().commit();
 			}
 
@@ -133,7 +141,6 @@ public class DiscoDAO extends Disco {
 
 		return result;
 	}
-
 	/**
 	 * Metodo que lista todas los discos de la base de datos
 	 * 
@@ -156,17 +163,17 @@ public class DiscoDAO extends Disco {
 			manager = Connection.connectToMysql();
 			manager.getTransaction().begin();
 
-			String q = "FROM disco";
+			String q = "FROM Disco";
 
 			if (pattern.length() > 0) {
 				q += "WHERE nombre LIKE ?";
 			}
 
 			if (pattern.length() > 0) {
-				result = manager.createQuery("FROM disco WHERE nombre LIKE '" + pattern + "%'").getResultList();
+				result = manager.createQuery("FROM Disco WHERE nombre LIKE '" + pattern + "%'").getResultList();
 
 			} else {
-				result = manager.createQuery("FROM disco").getResultList();
+				result = manager.createQuery("FROM Disco").getResultList();
 			}
 
 			manager.getTransaction().commit();
@@ -189,7 +196,7 @@ public class DiscoDAO extends Disco {
 			manager = Connection.connectToMysql();
 			manager.getTransaction().begin();
 
-			String q = "FROM disco WHERE idb=?";
+			String q = "FROM Disco WHERE id= ";
 
 			List<Disco> Discos = manager.createQuery(q + id).getResultList();
 
@@ -219,10 +226,10 @@ public class DiscoDAO extends Disco {
 			manager = Connection.connectToMysql();
 			manager.getTransaction().begin();
 
-			String q = "FROM disco WHERE nombre =";
+			
 
-			List<Disco> discos = manager.createQuery("FROM disco WHERE nombre = '" + nombre + "'").getResultList();
-
+			List<Disco> discos = manager.createQuery("FROM Disco WHERE nombre LIKE '"+ nombre +"%'")
+					.getResultList();
 			if (discos.size() != 0) {
 				result = discos.get(0);
 			}
@@ -234,6 +241,7 @@ public class DiscoDAO extends Disco {
 		}
 		return result;
 	}
+	
 
 	/**
 	 * Borra de la base de datos un Disco
@@ -249,7 +257,7 @@ public class DiscoDAO extends Disco {
 				manager = Connection.connectToMysql();
 				manager.getTransaction().begin();
 
-				if (manager.createQuery("DELETE FROM disco WHERE ID =" + this.id).executeUpdate() == 1) {
+				if (manager.createQuery("DELETE FROM Disco WHERE ID =" + this.id).executeUpdate() == 1) {
 					result = true;
 				}
 

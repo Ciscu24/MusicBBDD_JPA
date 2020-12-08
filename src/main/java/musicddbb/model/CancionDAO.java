@@ -109,7 +109,7 @@ public class CancionDAO extends Cancion {
 	 */
 
 	public int save() {
-		int result = -1;
+		int result = 0;
 
 		try {
 			manager = Connection.connectToMysql();
@@ -117,15 +117,20 @@ public class CancionDAO extends Cancion {
 			if (this.id > 0) {
 				// UPDATE
 				manager.getTransaction().begin();
-				manager.createNativeQuery("UPDATE Cancion SET nombre = ?, duracion = ?, WHERE id = ?")
-						.setParameter(1, this.nombre).setParameter(2, this.duracion).setParameter(3, this.id)
+				result=manager.createNativeQuery("UPDATE Cancion SET nombre = ?, duracion = ?, id_disco = ? WHERE id = ?")
+						.setParameter(1, this.nombre)
+						.setParameter(2, this.duracion)
+						.setParameter(3, this.disco_contenedor.id)
+						.setParameter(4, this.id)
 						.executeUpdate();
 				manager.getTransaction().commit();
 			} else {
 				// INSERT
 				manager.getTransaction().begin();
-				manager.createNativeQuery("INSERT INTO Cancion (id,nombre,duracion) VALUES (?,?,?)")
-						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.duracion)
+				result=manager.createNativeQuery("INSERT INTO Cancion (nombre,duracion,id_disco) VALUES (?,?,?)")
+						.setParameter(1, this.nombre)
+						.setParameter(2, this.duracion)
+						.setParameter(3, this.disco_contenedor.id)
 						.executeUpdate();
 				manager.getTransaction().commit();
 			}

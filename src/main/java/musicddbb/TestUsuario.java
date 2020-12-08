@@ -1,5 +1,6 @@
 package musicddbb;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import musicddbb.model.Cancion;
+import musicddbb.model.CancionDAO;
+import musicddbb.model.Disco;
+import musicddbb.model.DiscoDAO;
 import musicddbb.model.Lista;
 import musicddbb.model.ListaDAO;
 import musicddbb.model.SuscripcionDAO;
@@ -48,9 +53,10 @@ public class TestUsuario {
 		manager.getTransaction().commit();*/
         
 		
-		manager = Connection.connectToMysql();
-		Usuario usuario = new Usuario(1,"ciscu6@gmail.com", "Ciscu", "ciscu24.png");
-		Usuario usuario2 = new Usuario(2, "edu@gmail.com", "Edu", "Edu.png");
+		//manager = Connection.connectToMysql();
+		/*
+		Usuario usuario = new Usuario("ciscu6@gmail.com", "Ciscu", "ciscu24.png");
+		Usuario usuario2 = new Usuario("edu@gmail.com", "Edu", "Edu.png");
 		
 		Lista l1 = new Lista("PlayList24", "Esta playlist es de ciscu24", usuario);
         Lista l2 = new Lista("Music24", "Esta es otra playlist de ciscu24", usuario);
@@ -63,7 +69,24 @@ public class TestUsuario {
         manager.getTransaction().begin();
 		manager.getTransaction().commit();
 		
-
+	    UsuarioDAO u1=new UsuarioDAO(usuario2);
+	    u1.save();
+	    */
+	    Disco disco=new Disco("Colores","Colores.png",Date.valueOf("2020-10-20"));
+	    Disco disco1=new Disco("Prueba", "prueba.png", Date.valueOf("2020-10-20"));	    
+	    DiscoDAO d1=new DiscoDAO(disco1); 
+	    
+	    
+	    Disco disco2=new Disco("","",Date.valueOf("2020-10-20"));
+	    DiscoDAO d2=new DiscoDAO(disco2); 
+	   // System.out.println(d2.save());
+	    
+	    Cancion c1=new Cancion("Cancion con Yandel", 180,new Disco(6));
+	    CancionDAO c=new CancionDAO(c1);
+	    c.save();
+	    
+	    //System.out.println(UsuarioDAO.selectAllForID(1));
+	    //d1.save();
 		//System.out.println(SuscripcionDAO.selectAllListas(1));
 		//System.out.println(SuscripcionDAO.selectAllUsuario(4));
 		

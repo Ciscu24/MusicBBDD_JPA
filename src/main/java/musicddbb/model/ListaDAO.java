@@ -134,7 +134,7 @@ public class ListaDAO extends Lista {
 	 *         agregado o editado
 	 */
 	public int save() {
-		int result = -1;
+		int result = 0;
 
 		try {
 			manager = Connection.connectToMysql();
@@ -142,14 +142,14 @@ public class ListaDAO extends Lista {
 			if (this.id > 0) {
 				// UPDATE
 				manager.getTransaction().begin();
-				manager.createNativeQuery("UPDATE Lista SET nombre = ?, descripcion = ?, id_usuario = ? WHERE id = ?")
+				result=manager.createNativeQuery("UPDATE Lista SET nombre = ?, descripcion = ?, id_usuario = ? WHERE id = ?")
 						.setParameter(1, this.nombre).setParameter(2, this.descripcion).setParameter(3, this.creador.id).setParameter(4, this.id)
 						.executeUpdate();
 				manager.getTransaction().commit();
 			} else {
 				// INSERT
 				manager.getTransaction().begin();
-				manager.createNativeQuery("INSERT INTO Lista (id,nombre,descripcion, id_usuario) VALUES (?,?,?,?)")
+				result=manager.createNativeQuery("INSERT INTO Lista (id,nombre,descripcion, id_usuario) VALUES (?,?,?,?)")
 						.setParameter(1, this.id).setParameter(2, this.nombre).setParameter(3, this.descripcion).setParameter(4, this.creador.id)
 						.executeUpdate();
 				manager.getTransaction().commit();

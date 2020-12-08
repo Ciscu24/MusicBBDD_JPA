@@ -7,15 +7,18 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 @Entity
-@Table(name="Cancion")
+@Table(name="cancion")
 public class Cancion {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	protected int id;
 	@Column(name="nombre")
@@ -46,7 +49,6 @@ public class Cancion {
     }
     
     public Cancion(String nombre, int duracion, Disco disco_contenedor) {
-        this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
         this.disco_contenedor = disco_contenedor;
@@ -54,7 +56,6 @@ public class Cancion {
     }
 
     public Cancion(String nombre, int duracion, Disco disco_contenedor, List<Lista> listas) {
-        this.id = -1;
         this.nombre = nombre;
         this.duracion = duracion;
         this.disco_contenedor = disco_contenedor;
