@@ -344,5 +344,108 @@ public class CancionDAO extends Cancion {
 
 		return result;
 	}
+	
+	/**
+	 * Metodo que guarda una cancion en la base de datos
+	 *
+	 * @return -1 en caso de que no haga nada o el id de la cancion que hayamos
+	 *         agregado o editado
+	 */
+	public int saveH2() {
+		int result = 0;
+
+		try {
+			manager = Connection.connectToH2();
+
+			if (this.id > 0) {
+				// UPDATE
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("UPDATE Cancion SET nombre = ?, duracion = ?, id_disco = ? WHERE id = ?")
+						.setParameter(1, this.nombre)
+						.setParameter(2, this.duracion)
+						.setParameter(3, this.disco_contenedor.id)
+						.setParameter(4, this.id)
+						.executeUpdate();
+				manager.getTransaction().commit();
+			} else {
+				// INSERT
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("INSERT INTO Cancion (nombre,duracion,id_disco) VALUES (?,?,?)")
+						.setParameter(1, this.nombre)
+						.setParameter(2, this.duracion)
+						.setParameter(3, this.disco_contenedor.id)
+						.executeUpdate();
+				manager.getTransaction().commit();
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Borra de la base de datos La cancion
+	 *
+	 * @return -1 si no se ha borrado o el id de la cancion borrada
+	 */
+	public boolean removeH2() {
+		boolean result = false;
+
+		if (this.id > 0) {
+
+			try {
+
+				manager = Connection.connectToH2();
+				manager.getTransaction().begin();
+
+				if (manager.createQuery("DELETE FROM Cancion WHERE id = " + this.id).executeUpdate() == 1) {
+					result = true;
+				}
+
+				manager.getTransaction().commit();
+
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Funcion que selecciona por nombre todas las canciones de la base de datos que
+	 * sea por el pattern
+	 *
+	 * @param pattern Palabra por lo que se filtra el select
+	 * @return devuelve una lista de Canciones
+	 */
+	public static List<Cancion> selectAllH2(String pattern) {
+		List<Cancion> result = new ArrayList();
+
+		try {
+			manager = Connection.connectToH2();
+			manager.getTransaction().begin();
+
+			String q = "FROM Cancion";
+
+			if (pattern.length() > 0) {
+				q += " WHERE nombre LIKE ?";
+			}
+
+			if (pattern.length() > 0) {
+				result = manager.createQuery("FROM Cancion WHERE nombre LIKE '" + pattern + "%'").getResultList();
+			} else {
+				result = manager.createQuery("FROM Cancion").getResultList();
+			}
+
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
 
 }

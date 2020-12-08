@@ -141,6 +141,7 @@ public class DiscoDAO extends Disco {
 
 		return result;
 	}
+	
 	/**
 	 * Metodo que lista todas los discos de la base de datos
 	 * 
@@ -268,6 +269,114 @@ public class DiscoDAO extends Disco {
 			}
 
 		}
+		return result;
+	}
+	
+	
+	/**
+	 * Metodo que guarda un Disco en la base de datos
+	 *
+	 * @return -1 en caso de que no haga nada o el id del Disco que hayamos
+	 *         agregado o editado
+	 */
+	public int saveH2() {
+		int result = 0;
+
+		try {
+			manager = Connection.connectToH2();
+
+			if (this.id > 0) {
+				//UPDATE
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("UPDATE Disco SET nombre = ?, foto = ? , fecha_produccion=? WHERE id = ?")
+		        .setParameter(1, this.nombre)
+		        .setParameter(2, this.foto)
+		       // .setParameter(3, this.creador)
+		        .setParameter(3, this.fecha_produccion)
+		        .setParameter(4, this.id)
+		        .executeUpdate();
+				
+				manager.getTransaction().commit();
+			} else {
+				// INSERT
+				manager.getTransaction().begin();
+				result=manager.createNativeQuery("INSERT INTO Disco (nombre,foto,fecha_produccion) VALUES(?,?,?)")
+		        .setParameter(1, this.nombre)
+		        .setParameter(2, this.foto)
+		      //.setParameter(3, this.creador)
+		        .setParameter(3, this.fecha_produccion)
+		        .executeUpdate();
+				manager.getTransaction().commit();
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Borra de la base de datos H2 el disco 
+	 *
+	 * @return false si no se ha borrado o true si se ha borrado correctamente
+	 */
+	public boolean removeH2() {
+		boolean result = false;
+
+		if (this.id > 0) {
+
+			try {
+				manager = Connection.connectToH2();
+				manager.getTransaction().begin();
+
+				if (manager.createQuery("DELETE FROM Disco WHERE ID =" + this.id).executeUpdate() == 1) {
+					result = true;
+				}
+
+				manager.getTransaction().commit();
+
+			} catch (Exception ex) {
+				System.out.println(ex);
+			}
+
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * Funcion que selecciona por nombre todos los Discos de la base de datos H2 que
+	 * sea por el pattern
+	 *
+	 * @param pattern Palabra por lo que se filtra el select
+	 * @return devuelve una lista de Discos
+	 */
+	public static List<Disco> selectAllH2(String pattern) {
+		List<Disco> result = new ArrayList<Disco>();
+
+		try {
+			manager = Connection.connectToH2();
+			manager.getTransaction().begin();
+
+			String q = "FROM Disco";
+
+			if (pattern.length() > 0) {
+				q += "WHERE nombre LIKE ?";
+			}
+
+			if (pattern.length() > 0) {
+				result = manager.createQuery("FROM Disco WHERE nombre LIKE '" + pattern + "%'").getResultList();
+
+			} else {
+				result = manager.createQuery("FROM Disco").getResultList();
+			}
+
+			manager.getTransaction().commit();
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
 		return result;
 	}
 
